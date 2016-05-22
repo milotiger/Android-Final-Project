@@ -5,7 +5,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -13,19 +17,21 @@ public class MainActivity extends AppCompatActivity {
     RVAdapter adapter;
 
     ArrayList<ItemsListSingleItem> data = new ArrayList<>();
+
     RecyclerView rv;
+    LinearLayout layout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         rv = (RecyclerView) findViewById(R.id.rv);
         rv.setHasFixedSize(true);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
+
 
         data.add(
                 new ItemsListSingleItem(
@@ -53,16 +59,19 @@ public class MainActivity extends AppCompatActivity {
                         "Nu"
                 ));
 
+
         adapter = new RVAdapter(MainActivity.this, data, new CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 Log.d("", "clicked position:" + position);
                 long postId = data.get(position).getID();
-                String text = " Position: " + position + " " + data.get(position).getName();
                 // do what ever you want to do with it
             }
         });
 
+
         rv.setAdapter(adapter);
     }
+
+
 }
