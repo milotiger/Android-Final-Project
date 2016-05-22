@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
+    android:padding="8dp"
     android:orientation="vertical"
     android:background="#F5F5F5">
 
@@ -19,38 +19,51 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp">
+            android:padding="8dp">
+
+            <ImageView
+                android:layout_width="160dp"
+                android:layout_height="180dp"
+                android:id="@+id/imageAva"
+                android:layout_marginTop="-28dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/Title"
+                android:id="@+id/txtName"
+                android:layout_toRightOf="@+id/imageAva"
+                android:layout_marginLeft="6dp"
                 android:textColor="#000"
-                android:textSize="25sp"/>
+                android:textSize="20sp"/>
 
             <TextView
-                android:id="@+id/Sex"
+                android:id="@+id/txtAddress"
 		        android:textSize="15sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/Title" />
+                android:layout_below="@+id/txtName"
+                android:layout_toRightOf="@+id/imageAva"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="4dp"/>
 
-            <Button
-                android:id="@+id/btnAdd"
+            <TextView
+                android:id="@+id/txtCountry"
+                android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/Title"
-                android:layout_marginLeft="20dp"
-                style="?android:attr/buttonStyleSmall"
-                android:text="@string/icon_plus_circle"
-                android:background="#00000000"
-                android:textSize="25sp"/>
+                android:layout_below="@+id/txtAddress"
+                android:layout_toRightOf="@+id/imageAva"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"/>
 
             <LinearLayout
+                android:id="@+id/layoutImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_below="@+id/Sex">
+                android:layout_below="@+id/txtCountry"
+                android:layout_marginTop="5dp"
+                android:gravity="left">
 
                 <HorizontalScrollView
                     android:id="@+id/horizontal_scroll"
@@ -67,6 +80,55 @@
                 </HorizontalScrollView>
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btnLove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutImage"
+                style="?android:attr/buttonStyleSmall"
+                android:text="@string/icon_heart"
+                android:background="#00000000"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/btnLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/btnLove"
+                android:layout_below="@+id/layoutImage"
+                style="?android:attr/buttonStyleSmall"
+                android:text="@string/icon_location"
+                android:layout_marginLeft="5dp"
+                android:background="#00000000"
+                android:textColor="#000"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/btnCmt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/btnLocation"
+                android:layout_below="@+id/layoutImage"
+                style="?android:attr/buttonStyleSmall"
+                android:text="@string/icon_comment"
+                android:layout_marginLeft="5dp"
+                android:background="#00000000"
+                android:textColor="#000"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/btnCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/btnCmt"
+                android:layout_below="@+id/layoutImage"
+                style="?android:attr/buttonStyleSmall"
+                android:text="@string/icon_camera"
+                android:layout_marginLeft="5dp"
+                android:background="#00000000"
+                android:textColor="#000"
+                android:textSize="20sp"/>
 
         </RelativeLayout>
 

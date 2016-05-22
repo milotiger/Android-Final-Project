@@ -9,14 +9,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 
+import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
+import com.example.hmtri1312624.foodyapp.Service.RestService;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     RVAdapter adapter;
 
-    ArrayList<ItemsListSingleItem> data = new ArrayList<>();
+    List<FoodyItemInfo> data;
 
     RecyclerView rv;
     LinearLayout layout;
@@ -32,45 +39,34 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
 
+        getData();
+    }
 
-        data.add(
-                new ItemsListSingleItem(
-                        1,
-                        "Hoang Minh Tri",
-                        "Nam"
-                ));
+    private void getData(){
+        RestService restService = new RestService();
+        Call<List<FoodyItemInfo>> call = restService.getService().GetPlaces();
 
-        data.add(
-                new ItemsListSingleItem(
-                        2,
-                        "Nguyen Thanh Tri",
-                        "Nu"
-                ));
-        data.add(
-                new ItemsListSingleItem(
-                        3,
-                        "Cao Thai Toai",
-                        "Nu"
-                ));
-        data.add(
-                new ItemsListSingleItem(
-                        4,
-                        "Nguyen Viet Tri",
-                        "Nu"
-                ));
-
-
-        adapter = new RVAdapter(MainActivity.this, data, new CustomItemClickListener() {
+        call.enqueue(new Callback<List<FoodyItemInfo>>() {
             @Override
-            public void onItemClick(View v, int position) {
-                Log.d("", "clicked position:" + position);
-                long postId = data.get(position).getID();
-                // do what ever you want to do with it
+            public void onResponse(Call<List<FoodyItemInfo>> call, Response<List<FoodyItemInfo>> response) {
+                data = response.body();
+                adapter = new RVAdapter(MainActivity.this, data, new CustomItemClickListener() {
+                    @Override
+                    public void onItemClick(View v, int position) {
+                        Log.d("", "clicked position:" + position);
+                        long postId = data.get(position).getID();
+                        // do what ever you want to do with it
+                    }
+                });
+
+                rv.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<FoodyItemInfo>> call, Throwable t) {
+
             }
         });
-
-
-        rv.setAdapter(adapter);
     }
 
 
