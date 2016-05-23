@@ -1,8 +1,14 @@
 package com.example.hmtri1312624.foodyapp;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.Image;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hmtri1312624.foodyapp.Model.CommentDetail;
 import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
 import com.example.hmtri1312624.foodyapp.Service.RestService;
 import com.squareup.picasso.Picasso;
@@ -52,13 +59,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
         List<String> urls = data.get(position).MorePic;
         String Country = "";
         String urlAva = data.get(position).Thumbnail;
+        List<CommentDetail> cmts = data.get(position).CommentDetails;
         for(int i = 0; i < data.get(position).Tag.size(); i++)
         {
             Country += data.get(position).Tag.get(i);
             Country += " ";
         }
 
-        holder.setItem(urlAva,data.get(position).Headline,Address,Country,urls);
+        holder.setItem(urlAva,data.get(position).Headline,Address,Country,urls,cmts);
     }
 
 
@@ -83,6 +91,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
         public Button btnCmt;
         public Button btnCamera;
         public LinearLayout layout;
+        public RecyclerView rvcmt;
+        public RVCAdapter Cadapter;
+        public Context context;
 
         ViewHolder(View v) {
             super(v);
@@ -106,9 +117,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnLocation.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
             btnCmt.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
             btnCamera.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
+            context = v.getContext();
         }
 
-        public void setItem(String urlAva, String name, String address, String country, List<String> morepics) {
+        public void setItem(String urlAva, String name, String address, String country, List<String> morepics, final List<CommentDetail> cmts) {
             txtName.setText(name);
             txtAddress.setText(address);
             txtCountry.setText(country);
@@ -117,9 +129,33 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnCmt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    
+                    ShowComment(cmts);
                 }
             });
+        }
+
+        private void ShowComment(List<CommentDetail> cmts)
+        {
+            Dialog dialog = new Dialog(context);
+            dialog.setContentView(R.layout.cmt_rv_layout);
+            dialog.setTitle("Top Comment");
+
+            rvcmt = (RecyclerView) dialog.findViewById(R.id.rvcmt);
+            rvcmt.setHasFixedSize(true);
+
+            LinearLayoutManager llm = new LinearLayoutManager(MyApplication.getAppContext());
+            rvcmt.setLayoutManager(llm);
+
+            Cadapter = new RVCAdapter(MyApplication.getAppContext(), cmts, new CustomCmtClickListener(){
+                @Override
+                public void onCmtClick(View v, int position) {
+                    Log.d("", "clicked position:" + position);
+                    // do what ever you want to do with it
+                }
+            });
+
+            rvcmt.setAdapter(Cadapter);
+            dialog.show();
         }
 
         private void LoadAva(String urlAva) {
