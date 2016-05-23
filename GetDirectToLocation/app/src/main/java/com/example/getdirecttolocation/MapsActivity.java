@@ -2,13 +2,17 @@ package com.example.getdirecttolocation;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +34,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -97,13 +102,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Zoom in the Google Map
         mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet("Consider yourself located"));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet(getCompleteAddressString(latitude, longitude)));
 
         // Setting onclick event listener for the map
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
             @Override
             public void onMapClick(LatLng point) {
+
+                if (!isNetworkConnected()) {
+                    Toast.makeText(MapsActivity.this, "No Internet Connection!", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 // Already two locations
                 if (markerPoints.size() > 1) {
@@ -126,8 +136,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                  */
                 if (markerPoints.size() == 1) {
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    options.title("Start Location").snippet(getCompleteAddressString(point.latitude, point.longitude));
                 } else if (markerPoints.size() == 2) {
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    options.title("End Location").snippet(getCompleteAddressString(point.latitude, point.longitude));
                 }
 
                 // Add new marker to the Google Map Android API V2
@@ -293,12 +305,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(10);
+                lineOptions.width(15);
+                lineOptions.geodesic(true);
                 lineOptions.color(Color.BLUE);
             }
 
             // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
         }
+    }
+
+    private String getCompleteAddressString(double latitude, double longitude) {
+        String strAdd = "";
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+            if (addresses != null) {
+                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                String city = addresses.get(0).getAdminArea();
+                String state = addresses.get(0).getSubAdminArea();
+                String country = addresses.get(0).getCountryName();
+                strAdd = address + ", " + state + ", " + city + ", " + country;
+                Log.w("My Current location address", "" + strAdd);
+            } else {
+                Log.w("My Current location address", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.w("My Current location address", "Can not get Address!");
+        }
+        return strAdd;
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }
