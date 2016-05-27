@@ -6,4 +6,6 @@
     <string name="icon_location">&#xf124;</string>
     <string name="icon_comment">&#xf0e5;</string>
     <string name="icon_camera">&#xf030;</string>
+    <string name="icon_star">&#xf005;</string>
+    <string name="icon_search">&#xf002;</string>
 </resources>

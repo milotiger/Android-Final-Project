@@ -29,4 +29,5 @@ dependencies {
     compile "com.squareup.picasso:picasso:2.4.0"
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.github.dmytrodanylyk:android-morphing-button:98a4986e56'
 }

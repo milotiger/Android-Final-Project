@@ -1,12 +1,16 @@
 package com.example.hmtri1312624.foodyapp;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
@@ -24,10 +28,9 @@ public class MainActivity extends AppCompatActivity {
     RVAdapter adapter;
 
     List<FoodyItemInfo> data;
-
     RecyclerView rv;
     LinearLayout layout;
-
+    String foodname = "";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,13 +42,19 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
 
-        getData();
+        Intent i = getIntent();
+        Bundle bundle = i.getBundleExtra("MyPackage");
+        if(bundle != null) {
+            foodname  = bundle.getString("FoodName");
+            //foodname = foodname.replace(" ","%20");
+            getData();
+        }
     }
 
     private void getData(){
-        RestService restService = new RestService();
-        Call<List<FoodyItemInfo>> call = restService.getService().GetPlaces();
 
+        RestService restService = new RestService();
+        Call<List<FoodyItemInfo>> call = restService.getService().GetPlaces(foodname);
         call.enqueue(new Callback<List<FoodyItemInfo>>() {
             @Override
             public void onResponse(Call<List<FoodyItemInfo>> call, Response<List<FoodyItemInfo>> response) {

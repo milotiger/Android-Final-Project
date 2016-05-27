@@ -84,7 +84,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
         String numcmt = data.get(position).Comments;
         String numcamera = data.get(position).Pictures;
-        holder.setItem(urlAva,data.get(position).Headline,Address,Country,time,stt,numcmt,numcamera,urls,cmts);
+        String rate = data.get(position).Rating;
+        holder.setItem(urlAva,data.get(position).Headline,Address,Country,time,stt,numcmt,numcamera,urls,cmts,rate);
     }
 
 
@@ -100,9 +101,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtName, txtAddress,txtCountry,txtTimeOpen,txtStt,txtNumCmt,txtNumCamera;
+        public TextView txtName, txtAddress,txtCountry,txtTimeOpen,txtStt,txtNumCmt,txtNumCamera,txtRate;
         public ImageView imageAva;
-        public Button btnLove, btnLocation, btnCmt, btnCamera;
+        public Button btnLove, btnLocation, btnCmt, btnCamera, btnStar;
         public LinearLayout layout;
         public RecyclerView rvcmt;
         public RVCAdapter Cadapter;
@@ -120,11 +121,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
             txtTimeOpen = (TextView)v.findViewById(R.id.txtTimeOpen);
             txtStt = (TextView)v.findViewById(R.id.txtStatus);
+            txtRate = (TextView)v.findViewById(R.id.txtRate);
 
             btnLove = (Button)v.findViewById(R.id.btnLove);
             btnLocation = (Button)v.findViewById(R.id.btnLocation);
             btnCmt = (Button)v.findViewById(R.id.btnCmt);
             btnCamera = (Button)v.findViewById(R.id.btnCamera);
+            btnStar = (Button)v.findViewById(R.id.btnStar);
 
             layout = (LinearLayout)v.findViewById(R.id.listimage);
 
@@ -133,25 +136,28 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             txtCountry.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.ROBOTO));
 
             txtTimeOpen.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.ROBOTO));
-            txtStt.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.ROBOTO));
+            txtStt.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),"Roboto-Medium.ttf"));
+            txtRate.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),"Roboto-Medium.ttf"));
 
             btnLove.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
             btnLocation.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
             btnCmt.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
             btnCamera.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
+            btnStar.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
 
             //Important line, fix Unable to add window — token null is not valid for dialog
             // dont use AppContext for new Dialog, should use ...Activity.this
             context = v.getContext();
         }
 
-        public void setItem(String urlAva, String name, String address, String country, String time, String stt, String numcmt, String numcmr, List<String> morepics, final List<CommentDetail> cmts) {
+        public void setItem(String urlAva, String name, String address, String country, String time, String stt, String numcmt, String numcmr, List<String> morepics, final List<CommentDetail> cmts, String rate) {
             txtName.setText(name);
             txtAddress.setText(address);
             txtCountry.setText(country);
             txtNumCmt.setText(numcmt);
             txtNumCamera.setText(numcmr);
             txtTimeOpen.setText(time);
+            txtRate.setText(rate);
 
             String Times[] = time.split(" - ");
 
@@ -167,6 +173,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                 stt = "Open now";
                 txtStt.setTextColor(Color.parseColor("#0cce2c"));
             }
+
 
             txtStt.setText(stt);
             LoadAva(urlAva);
@@ -219,11 +226,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                     .into(imageAva);
         }
 
-        public void LoadImage(List<String> urls)
+        public void LoadImage(final List<String> urls)
         {
             for (int i = 0; i < urls.size(); i++) {
-                ImageView imageView = new ImageView(MyApplication.getAppContext());
+                final ImageView imageView = new ImageView(MyApplication.getAppContext());
                 imageView.setId(i);
+
 
                 imageView.setPadding(5,5,5,5);
                 Picasso.with(MyApplication.getAppContext())
@@ -233,10 +241,39 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(120, 120);
                 imageView.setLayoutParams(layoutParams);
 
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Toast.makeText(context,"ABC",Toast.LENGTH_LONG).show();
+                        showFullImage("http:" + urls.get(v.getId()));
+                    }
+                });
+
                 layout.addView(imageView);
             }
         }
 
+        private void showFullImage(String urlImage){
+            final Dialog dialog = new Dialog(context);
+            dialog.setContentView(R.layout.custom_fullimage_dialog);
+            Button dialogButton = (Button) dialog.findViewById(R.id.btnClose);
+            // if button is clicked, close the custom dialog
+            dialogButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+            ImageView imageShow = (ImageView) dialog.findViewById(R.id.fullimage);
+
+            imageShow.setPadding(5,5,5,5);
+            Picasso.with(MyApplication.getAppContext())
+                    .load(urlImage)
+                    .into(imageShow);
+
+            dialog.show();
+        }
         private boolean isOpen(String openTime, String closeTime){
             // returns a TimeZone based on the time zone where the program is running.
             //(TimeZone.getDefault())
@@ -260,12 +297,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
             String units2[] = units1[1].split(" ");
             String part3 = units2[0];// MM
-            String part4 = units2[1];// AM or PM
+            String part4 = units2[1];// AM or PM or SA or CH //Vietnamese and English case;
 
             int hour = Integer.parseInt(part1);
             int mm = Integer.parseInt(part3);
 
-            if(part4.compareTo("PM") == 0)
+            if(part4.compareTo("PM") == 0 || part4.compareTo("CH") == 0)
                 hour = hour + 12;
 
             second = hour * 3600 + mm * 60;
@@ -279,4 +316,5 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             return secondTime2 - secondTime1;
         }
     }
+
 }
