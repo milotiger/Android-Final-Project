@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:padding="10dp"
-        android:gravity="center"
         android:background="@drawable/layout_corner">
         <EditText
             android:id="@+id/editFood"
@@ -16,26 +17,19 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:gravity="left"
-            android:textColorHint="#FFEBEE"
-            android:hint="Food....."/>
-        <Button
-            android:id="@+id/btnSearchFood"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/icon_search"
-            android:textColor="#F44336"
-            android:textSize="25sp"
-            android:layout_toRightOf="@+id/editFood"
-            android:background="#00000000"/>
+            android:layout_margin="10dp"
+            android:textColorHint="#FFCDD2"
+            android:hint="Food....."
+            android:layout_centerHorizontal="true"/>
 
-        <com.dd.morphingbutton.MorphingButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Show"
-            android:id="@+id/btnShow"
-            android:layout_marginLeft="20dp"
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="55dp"
+            android:text="Search"
+            android:background="@drawable/layout_button"
+            android:textColor="#fff"
+            android:id="@+id/btnSearchFood"
             android:layout_below="@+id/editFood"
-            android:layout_marginTop="50dp"/>
+            android:layout_centerHorizontal="true"/>
     </RelativeLayout>
 </RelativeLayout>

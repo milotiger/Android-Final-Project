@@ -12,6 +12,6 @@ import retrofit2.http.Path;
  * Created by M-Tae on 5/22/2016.
  */
 public interface APIService {
-    @GET("result/{foodname}/1") // Default get 10 places
+    @GET("search/{foodname}/1") // Default get 1 places
     Call<List<FoodyItemInfo>> GetPlaces(@Path("foodname") String foodname);
 }
