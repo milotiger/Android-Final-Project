@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //adjust-layout-in-full-screen-mode-when-softkeyboard-is-visible
+        AndroidBug5497Workaround.assistActivity(MainActivity.this);
 
         layoutSearch = (RelativeLayout) findViewById(R.id.layout_search);
         rv = (RecyclerView) findViewById(R.id.rv);
