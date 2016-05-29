@@ -2,5 +2,8 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#42A5F5</color>
+    <color name="color_preloader_start">#42A5F5</color>
+    <color name="color_preloader_center">#2196F3</color>
+    <color name="color_preloader_end">#fff</color>
 </resources>

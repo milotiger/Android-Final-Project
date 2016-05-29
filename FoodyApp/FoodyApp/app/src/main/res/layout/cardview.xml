@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
+    android:padding="8dp"
     android:orientation="vertical"
     android:background="#F5F5F5">
 
@@ -19,75 +19,170 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp">
+            android:padding="8dp">
+
+            <ImageView
+                android:layout_width="160dp"
+                android:layout_height="180dp"
+                android:id="@+id/imageAva"
+                android:layout_marginTop="-28dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/Title"
+                android:id="@+id/txtName"
+                android:layout_toRightOf="@+id/imageAva"
+                android:layout_marginLeft="6dp"
                 android:textColor="#000"
-                android:textSize="30sp"/>
+                android:textSize="20sp"/>
 
             <TextView
-                android:id="@+id/Sex"
+                android:id="@+id/txtAddress"
 		        android:textSize="15sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/Title" />
+                android:layout_below="@+id/txtName"
+                android:layout_toRightOf="@+id/imageAva"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="4dp"/>
 
-            <Button
-                android:id="@+id/btnAdd"
+            <TextView
+                android:id="@+id/txtCountry"
+                android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/Title"
-                android:layout_marginLeft="20dp"
-                style="?android:attr/buttonStyleSmall"
-                android:text="@string/icon_plus_circle"
-                android:background="#00000000"
-                android:textSize="25sp"/>
+                android:layout_below="@+id/txtAddress"
+                android:layout_toRightOf="@+id/imageAva"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageAva"
+                android:id="@+id/txtTimeOpen"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtTimeOpen"
+                android:layout_marginTop="5dp"
+                android:textStyle="bold"
+                android:id="@+id/txtStatus"/>
 
             <LinearLayout
-                android:layout_below="@id/Sex"
+                android:id="@+id/layoutImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:orientation="horizontal"
-                android:background="#fff">
+                android:layout_below="@+id/txtStatus"
+                android:layout_marginTop="5dp"
+                android:gravity="left">
 
-                <android.support.v7.widget.CardView
+                <HorizontalScrollView
+                    android:id="@+id/horizontal_scroll"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/cvimage"
-                    card_view:cardBackgroundColor="#fff"
-                    card_view:cardCornerRadius="4dp"
-                    card_view:cardElevation="2dp"
-                    card_view:cardUseCompatPadding="true">
+                    android:layout_height="wrap_content" >
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:id="@+id/listimage"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="4dp"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/image1"/>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/image4"/>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/image2"/>
+                        android:orientation="horizontal" >
                     </LinearLayout>
 
-                </android.support.v7.widget.CardView>
+                </HorizontalScrollView>
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btnLove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutImage"
+                style="?android:attr/buttonStyleSmall"
+                android:text="@string/icon_heart"
+                android:background="#00000000"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/btnLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/txtNumCamera"
+                android:layout_below="@+id/layoutImage"
+                style="?android:attr/buttonStyleSmall"
+                android:text="@string/icon_location"
+                android:background="#00000000"
+                android:textColor="#000"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/btnCmt"
+                android:layout_below="@+id/layoutImage"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="-6dp"
+                android:id="@+id/txtNumCmt"/>
+
+            <Button
+                android:id="@+id/btnCmt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/btnLove"
+                android:layout_below="@+id/layoutImage"
+                style="?android:attr/buttonStyleSmall"
+                android:text="@string/icon_comment"
+                android:layout_marginLeft="5dp"
+                android:background="#00000000"
+                android:textColor="#000"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/btnCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/txtNumCmt"
+                android:layout_below="@+id/layoutImage"
+                style="?android:attr/buttonStyleSmall"
+                android:text="@string/icon_camera"
+                android:layout_marginLeft="5dp"
+                android:background="#00000000"
+                android:textColor="#000"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/btnCamera"
+                android:layout_below="@+id/layoutImage"
+                android:id="@+id/txtNumCamera"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="-6dp"/>
+
+            <Button
+                android:id="@+id/btnStar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/txtRate"
+                android:layout_below="@+id/layoutImage"
+                style="?android:attr/buttonStyleSmall"
+                android:background="#00000000"
+                android:text="@string/icon_star"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtRate"
+                android:layout_below="@+id/layoutImage"
+                android:layout_toRightOf="@id/btnLocation"
+                android:textSize="20sp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="10dp"
+                android:textColor="#0BAD26"/>
+
 
         </RelativeLayout>
 
