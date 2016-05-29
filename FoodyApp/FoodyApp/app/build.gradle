@@ -30,4 +30,5 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.github.dmytrodanylyk:android-morphing-button:98a4986e56'
+    compile 'com.squareup.okhttp3:okhttp:3.3.1'
 }
