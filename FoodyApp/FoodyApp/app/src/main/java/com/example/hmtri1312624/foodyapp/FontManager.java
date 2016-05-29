@@ -12,7 +12,8 @@ import android.widget.TextView;
 public class FontManager {
     public static final String ROOT = "fonts/",
             FONTAWESOME = "fontawesome-webfont.ttf",
-            ROBOTO = "Roboto-LightItalic.ttf";
+            ROBOTO = "Roboto-Regular.ttf",
+            ROBOTOLIGHT = "Roboto-LightItalic.ttf";
 
     public static Typeface getTypeface(Context context, String font) {
         return Typeface.createFromAsset(context.getAssets(), font);
