@@ -10,8 +10,8 @@ import retrofit2.http.Path;
 
 /**
  * Created by M-Tae on 5/22/2016.
- */
+*/
 public interface APIService {
-    @GET("https://api.myjson.com/bins/2x6h8/?pretty=1")
-    Call<List<FoodyItemInfo>> GetPlaces();
+    @GET("WhatToEatToDay/api/result/{query}")
+    Call<List<FoodyItemInfo>> GetPlaces(@Path("query") String Query);
 }
