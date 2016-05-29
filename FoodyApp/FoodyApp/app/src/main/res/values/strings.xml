@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FoodyApp</string>
+    <string name="app_name">What to Eat Today</string>
     <string name="action_settings">Settings</string>
     <string name="icon_plus_circle">&#xf055;</string>
     <string name="icon_heart">&#xf08a;</string>

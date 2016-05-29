@@ -1,7 +1,10 @@
 package com.example.hmtri1312624.foodyapp.Global;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 /**
  * Created by ADMIN on 29-May-16.
@@ -23,6 +26,15 @@ public class Global {
         {
             dialog.dismiss();
             dialog = null;
+        }
+    }
+
+    public static void hideSoftInput(Activity activity)
+    {
+        View view = activity.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }

@@ -1,17 +1,21 @@
 package com.example.hmtri1312624.foodyapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.hmtri1312624.foodyapp.Global.Global;
 import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editSearch;
     RelativeLayout layoutSearch;
     Context context;
+    Activity activity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = this;
+        activity = this;
         //adjust-layout-in-full-screen-mode-when-softkeyboard-is-visible
         AndroidBug5497Workaround.assistActivity(MainActivity.this);
 
@@ -50,10 +56,20 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
 
-        //bar = (ProgressBar) this.findViewById(R.id.progressBar);
-        //Global.showPreloader(this, "Loading Data....");
+
         editSearch = (EditText)findViewById(R.id.editSearchNext);
         editSearch.setTypeface(FontManager.getTypeface(MainActivity.this,FontManager.ROBOTO));
+        editSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH)
+                {
+                    SearchOther();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         btnSearchNext = (Button)findViewById(R.id.btnSearchNext);
         btnSearchNext.setTypeface(FontManager.getTypeface(MainActivity.this,FontManager.FONTAWESOME));
@@ -62,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
         btnSearchNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Global.CurrentQuery = editSearch.getText().toString();
-                getData(Global.CurrentQuery);
+                SearchOther();
             }
         });
 
@@ -74,12 +89,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getData(Global.CurrentQuery);
+                Global.hideSoftInput(activity);
             }
         });
 
 
         getData(Global.CurrentQuery);
-
     }
 
     private void getData(String FoodName){
@@ -92,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<FoodyItemInfo>> call, Response<List<FoodyItemInfo>> response) {
                 Global.hidePreloader();
+                Global.hideSoftInput(activity);
                 data = response.body();
                 adapter = new RVAdapter(MainActivity.this, data, new CustomItemClickListener() {
                     @Override
@@ -109,8 +125,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<FoodyItemInfo>> call, Throwable t) {
-
+                Global.hidePreloader();
             }
         });
+    }
+
+    private void SearchOther()
+    {
+        Global.CurrentQuery = editSearch.getText().toString();
+        getData(Global.CurrentQuery);
+        Global.hideSoftInput(activity);
     }
 }
