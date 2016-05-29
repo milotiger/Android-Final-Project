@@ -19,12 +19,13 @@ public class FoodyItemInfo {
     public List<String> OpenTime;
     public List<String> Price;
     public List<String> MorePic;
+    public List<String> MorePic_Full;
     public List<FoodyMenuItem> MenuItems;
     public List<CommentDetail> CommentDetails;
     public String Phone;
     public long ID;
 
-    public FoodyItemInfo(long id, String detailUrl, String headline, String thumbnail, String addressLv1, String addressLv2, String addressLv3, String rating, String comments, String pictures, List<String> tag, List<String> openTime, List<String> price, List<String> morePic, List<FoodyMenuItem> menuItems, List<CommentDetail> commentDetails, String phone) {
+    public FoodyItemInfo(long id, String detailUrl, String headline, String thumbnail, String addressLv1, String addressLv2, String addressLv3, String rating, String comments, String pictures, List<String> tag, List<String> openTime, List<String> price, List<String> morePic , List<String> morePic_Full, List<FoodyMenuItem> menuItems, List<CommentDetail> commentDetails, String phone) {
         ID = id;
         DetailUrl = detailUrl;
         Headline = headline;
@@ -39,6 +40,7 @@ public class FoodyItemInfo {
         OpenTime = openTime;
         Price = price;
         MorePic = morePic;
+        MorePic_Full = morePic_Full;
         MenuItems = menuItems;
         CommentDetails = commentDetails;
         Phone = phone;

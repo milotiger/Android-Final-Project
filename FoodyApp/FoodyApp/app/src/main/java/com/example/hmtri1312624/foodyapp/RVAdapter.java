@@ -73,7 +73,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
         String numcmt = data.get(position).Comments;
         String numcamera = data.get(position).Pictures;
         String rate = data.get(position).Rating;
-        holder.setItem(urlAva,data.get(position).Headline,Address,Country,time,stt,numcmt,numcamera,urls,cmts,rate, data.get(position).Price);
+        holder.setItem(urlAva,data.get(position).Headline,Address,Country,time,stt,numcmt,numcamera,urls, data.get(position).MorePic_Full,cmts,rate, data.get(position).Price);
     }
 
 
@@ -139,7 +139,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             context = v.getContext();
         }
 
-        public void setItem(String urlAva, String name, String address, String country, String time, String stt, String numcmt, String numcmr, List<String> morepics, final List<CommentDetail> cmts, String rate, List<String> Price) {
+        public void setItem(String urlAva, String name, String address, String country, String time, String stt, String numcmt, String numcmr, List<String> morepics, List<String> morepics_full, final List<CommentDetail> cmts, String rate, List<String> Price) {
             txtName.setText(name);
             txtAddress.setText(address);
             txtCountry.setText(country);
@@ -172,7 +172,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
             txtStt.setText(stt);
             LoadAva(urlAva);
-            LoadImage(morepics);
+            LoadImage(morepics, morepics_full);
             btnCmt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -221,7 +221,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                     .into(imageAva);
         }
 
-        public void LoadImage(final List<String> urls)
+        public void LoadImage(final List<String> urls, final List<String> Highurl)
         {
             for (int i = 0; i < urls.size(); i++) {
                 final ImageView imageView = new ImageView(MyApplication.getAppContext());
@@ -240,7 +240,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                     @Override
                     public void onClick(View v) {
                         //Toast.makeText(context,"ABC",Toast.LENGTH_LONG).show();
-                        showFullImage("http:" + urls.get(v.getId()));
+                        showFullImage("http:" + Highurl.get(v.getId()));
                     }
                 });
 

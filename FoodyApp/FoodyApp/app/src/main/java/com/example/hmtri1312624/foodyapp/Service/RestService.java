@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RestService {
-    private static final String URL = "http://192.168.137.1/";
+    private static final String URL = "http://192.168.1.5/";
     private Retrofit restAdapter;
     private APIService apiService;
 
