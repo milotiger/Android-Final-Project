@@ -1,12 +1,8 @@
 package com.example.hmtri1312624.foodyapp;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.media.Image;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,25 +13,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.hmtri1312624.foodyapp.Model.CommentDetail;
 import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
-import com.example.hmtri1312624.foodyapp.Service.RestService;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by M-Tae on 4/7/2016.
@@ -85,7 +73,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
         String numcmt = data.get(position).Comments;
         String numcamera = data.get(position).Pictures;
         String rate = data.get(position).Rating;
-        holder.setItem(urlAva,data.get(position).Headline,Address,Country,time,stt,numcmt,numcamera,urls,cmts,rate);
+        holder.setItem(urlAva,data.get(position).Headline,Address,Country,time,stt,numcmt,numcamera,urls,cmts,rate, data.get(position).Price);
     }
 
 
@@ -101,7 +89,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtName, txtAddress,txtCountry,txtTimeOpen,txtStt,txtNumCmt,txtNumCamera,txtRate;
+        public TextView txtName, txtAddress,txtCountry,txtTimeOpen,txtStt,txtNumCmt,txtNumCamera,txtRate, txtPrice;
         public ImageView imageAva;
         public Button btnLove, btnLocation, btnCmt, btnCamera, btnStar;
         public LinearLayout layout;
@@ -122,6 +110,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             txtTimeOpen = (TextView)v.findViewById(R.id.txtTimeOpen);
             txtStt = (TextView)v.findViewById(R.id.txtStatus);
             txtRate = (TextView)v.findViewById(R.id.txtRate);
+            txtPrice = (TextView)v.findViewById(R.id.txtPrice);
 
             btnLove = (Button)v.findViewById(R.id.btnLove);
             btnLocation = (Button)v.findViewById(R.id.btnLocation);
@@ -150,7 +139,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             context = v.getContext();
         }
 
-        public void setItem(String urlAva, String name, String address, String country, String time, String stt, String numcmt, String numcmr, List<String> morepics, final List<CommentDetail> cmts, String rate) {
+        public void setItem(String urlAva, String name, String address, String country, String time, String stt, String numcmt, String numcmr, List<String> morepics, final List<CommentDetail> cmts, String rate, List<String> Price) {
             txtName.setText(name);
             txtAddress.setText(address);
             txtCountry.setText(country);
@@ -161,17 +150,23 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
             String Times[] = time.split(" - ");
 
-            String openTime = Times[0];
-            String closeTime = Times[1];
+            if (Times.length == 2) {
+                String openTime = Times[0];
+                String closeTime = Times[1];
 
-            if(isOpen(openTime, closeTime) == false)
-            {
-                stt = "Close now";
-                txtStt.setTextColor(Color.parseColor("#F44336"));
+                if (!isOpen(openTime, closeTime)) {
+                    stt = "Close now";
+                    txtStt.setTextColor(Color.parseColor("#F44336"));
+                } else {
+                    stt = "Open now";
+                    txtStt.setTextColor(Color.parseColor("#0cce2c"));
+                }
             }
-            else{
-                stt = "Open now";
-                txtStt.setTextColor(Color.parseColor("#0cce2c"));
+            else stt = "N/A";
+
+            if (Price.size() == 2)
+            {
+                txtPrice.setText(Price.get(0) + "đ - " + Price.get(1) + "đ");
             }
 
 

@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/cv"
         card_view:cardBackgroundColor="#fff"
-        card_view:cardCornerRadius="10dp"
         card_view:cardElevation="3dp"
         card_view:cardUseCompatPadding="true">
 
@@ -25,12 +24,14 @@
                 android:layout_width="160dp"
                 android:layout_height="180dp"
                 android:id="@+id/imageAva"
+                android:background="?attr/colorPrimary"
                 android:layout_marginTop="-28dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtName"
+                android:text="NAME"
                 android:layout_toRightOf="@+id/imageAva"
                 android:layout_marginLeft="6dp"
                 android:textColor="#000"
@@ -38,6 +39,7 @@
 
             <TextView
                 android:id="@+id/txtAddress"
+                android:text="Address"
 		        android:textSize="15sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,8 +61,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/txtPrice"
+                android:text="Price"
                 android:layout_below="@+id/imageAva"
-                android:id="@+id/txtTimeOpen"/>
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtPrice"
+                android:id="@+id/txtTimeOpen"
+                android:text="Open Time"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -68,7 +79,8 @@
                 android:layout_below="@+id/txtTimeOpen"
                 android:layout_marginTop="5dp"
                 android:textStyle="bold"
-                android:id="@+id/txtStatus"/>
+                android:id="@+id/txtStatus"
+                android:text="Status"/>
 
             <LinearLayout
                 android:id="@+id/layoutImage"
