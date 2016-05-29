@@ -3,15 +3,13 @@ package com.example.hmtri1312624.foodyapp;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.dd.morphingbutton.MorphingButton;
+import com.example.hmtri1312624.foodyapp.Global.Global;
 
 /**
  * Created by M-Tae on 5/27/2016.
@@ -40,8 +38,7 @@ public class SearchActivity extends Activity {
                 if(foodname.compareTo("") == 0)
                     ShowDialog("Missing Type Your Food!!");
                 else {
-                    bundle.putString("FoodName", foodname);
-                    i.putExtra("MyPackage", bundle);
+                    Global.CurrentQuery = foodname;
                     startActivity(i);
                 }
             }
