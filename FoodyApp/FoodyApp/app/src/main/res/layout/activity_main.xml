@@ -22,7 +22,7 @@
 
                 <EditText
                     android:id="@+id/editSearchNext"
-                    android:layout_width="220dp"
+                    android:layout_width="240dp"
                     android:layout_height="wrap_content"/>
 
                 <Button

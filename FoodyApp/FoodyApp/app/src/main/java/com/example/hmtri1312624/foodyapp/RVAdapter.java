@@ -283,7 +283,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
             date.setTimeZone(TimeZone.getTimeZone("GMT+7:00"));
             String localTime = date.format(currentLocalTime);
-            if(TimeDistance(openTime,localTime) > 0 && TimeDistance(localTime,closeTime) > 0)
+            if(TimeDistance(openTime,closeTime) < 0) // Ex: 6:00 AM - 3:00 AM (21 hours)
+            {
+                if(TimeDistance(localTime,closeTime) > 0 && TimeDistance(localTime,openTime) < 0)
+                    return true;
+                else
+                    return false;
+            }
+            else if(TimeDistance(openTime,localTime) > 0 && TimeDistance(localTime,closeTime) > 0)
                 return true;
             return false;
         }

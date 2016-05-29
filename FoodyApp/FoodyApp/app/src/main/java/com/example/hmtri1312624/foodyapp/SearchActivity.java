@@ -38,7 +38,8 @@ public class SearchActivity extends Activity {
                 Bundle bundle = new Bundle();
                 String foodname = editFood.getText().toString();
                 if(foodname.compareTo("") == 0)
-                    ShowDialog("Missing Type Your Food!!");
+                    //ShowDialog("Missing Type Your Food!!");
+                    MyAlertDialog.ShowDialog("Missing Type Your Food!!",SearchActivity.this);
                 else {
                     bundle.putString("FoodName", foodname);
                     i.putExtra("MyPackage", bundle);
@@ -46,19 +47,5 @@ public class SearchActivity extends Activity {
                 }
             }
         });
-    }
-
-    private void ShowDialog(String text){
-        final AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-        alertDialog.setTitle("Alert Dialog");
-        alertDialog.setMessage(text);
-
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        alertDialog.dismiss();
-                    }
-                });
-        alertDialog.show();
     }
 }

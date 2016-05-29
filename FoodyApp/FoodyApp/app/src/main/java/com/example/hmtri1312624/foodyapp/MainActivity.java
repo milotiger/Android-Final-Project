@@ -38,14 +38,13 @@ public class MainActivity extends AppCompatActivity {
     Button btnNext,btnSearchNext;
     EditText editSearch;
     RelativeLayout layoutSearch;
+    boolean isCurrentSearch = false, isNewSearch = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //adjust-layout-in-full-screen-mode-when-softkeyboard-is-visible
-        AndroidBug5497Workaround.assistActivity(MainActivity.this);
 
         layoutSearch = (RelativeLayout) findViewById(R.id.layout_search);
         rv = (RecyclerView) findViewById(R.id.rv);
@@ -66,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 nextFoodName = editSearch.getText().toString();
+                currentFoodName = nextFoodName;
+                MyAlertDialog.ShowDialog("You search new food!",MainActivity.this);
                 new ProgressTaskSearchNext().execute();
             }
         });
@@ -80,7 +81,15 @@ public class MainActivity extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ProgressTaskFindNext().execute();
+                if(isCurrentSearch == false)
+                {
+                    isCurrentSearch = true;
+                    new ProgressTaskFindNext().execute();
+                }
+                else
+                {
+                    MyAlertDialog.ShowDialog("Calm down.... we are searching...!!!!",MainActivity.this);
+                }
             }
         });
     }
@@ -156,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void getData(String FoodName){
+    private void getData(final String FoodName){
 
         RestService restService = new RestService();
         Call<List<FoodyItemInfo>> call = restService.getService().GetPlaces(FoodName);
@@ -178,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
                 bar.setVisibility(View.GONE);
                 btnNext.setVisibility(View.VISIBLE);
                 layoutSearch.setVisibility(View.VISIBLE);
+
+                isCurrentSearch = false;
             }
 
             @Override
