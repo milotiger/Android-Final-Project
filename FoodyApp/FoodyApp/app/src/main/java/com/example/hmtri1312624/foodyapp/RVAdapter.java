@@ -240,7 +240,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                     @Override
                     public void onClick(View v) {
                         //Toast.makeText(context,"ABC",Toast.LENGTH_LONG).show();
-                        showFullImage("http:" + Highurl.get(v.getId()));
+                        showFullImage(Highurl, v.getId());
                     }
                 });
 
@@ -248,24 +248,58 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             }
         }
 
-        private void showFullImage(String urlImage){
+        private void showFullImage(final List<String> urlImages,final int Index){
             final Dialog dialog = new Dialog(context);
             dialog.setContentView(R.layout.custom_fullimage_dialog);
-            Button dialogButton = (Button) dialog.findViewById(R.id.btnClose);
+            final int CurrIndex = Index;
+
+
+            final ImageView imageShow = (ImageView) dialog.findViewById(R.id.fullimage);
+
+            //imageShow.setPadding(5,5,5,5);
+            Picasso.with(MyApplication.getAppContext())
+                    .load("http:" + urlImages.get(CurrIndex))
+                    .into(imageShow);
+
+            Button CloseButton = (Button) dialog.findViewById(R.id.btnClose);
             // if button is clicked, close the custom dialog
-            dialogButton.setOnClickListener(new View.OnClickListener() {
+            CloseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
                 }
             });
 
-            ImageView imageShow = (ImageView) dialog.findViewById(R.id.fullimage);
+            final Button NextButton = (Button) dialog.findViewById(R.id.btnNext);
+            NextButton.setId(Index + 1);
+            NextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int Index = v.getId();
+                    if (Index < urlImages.size()) {
+                        Picasso.with(MyApplication.getAppContext())
+                                .load("http:" + urlImages.get(Index))
+                                .into(imageShow);
+                        v.setId(++Index);
+                    }
+                }
+            });
 
-            imageShow.setPadding(5,5,5,5);
-            Picasso.with(MyApplication.getAppContext())
-                    .load(urlImage)
-                    .into(imageShow);
+            final Button PrevButton = (Button) dialog.findViewById(R.id.btnPrev);
+            PrevButton.setId(Index - 1);
+            PrevButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int Index = v.getId();
+                    if (Index >= 0) {
+                        Picasso.with(MyApplication.getAppContext())
+                                .load("http:" + urlImages.get(Index))
+                                .into(imageShow);
+                        v.setId(--Index);
+                    }
+                }
+            });
+
 
             dialog.show();
         }
