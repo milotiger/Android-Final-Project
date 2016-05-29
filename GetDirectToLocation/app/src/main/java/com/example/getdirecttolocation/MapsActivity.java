@@ -14,6 +14,8 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.getdirecttolocation.Services.APIService;
+import com.example.getdirecttolocation.Services.RestService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,10 +38,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     public static ArrayList<LatLng> markerPoints;
+    public RLocation Result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +55,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerPoints = new ArrayList<LatLng>();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+               .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
 
     /**
      * Manipulates the map once available.
@@ -65,7 +71,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker").snippet("Snippet"));
 
         // Enable MyLocation Layer of Google Map
@@ -76,10 +81,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
-
         // Get the name of the best provider
         String provider = locationManager.getBestProvider(criteria, true);
-
         // Get Current Location
         Location myLocation = locationManager.getLastKnownLocation(provider);
 
@@ -88,59 +91,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Get latitude of the current location
         double latitude = myLocation.getLatitude();
-
         // Get longitude of the current location
         double longitude = myLocation.getLongitude();
-
         // Create a LatLng object for the current location
-        LatLng latLng = new LatLng(latitude, longitude);
+        LatLng currentLocation = new LatLng(latitude, longitude);
 
-        markerPoints.add(latLng);
+        markerPoints.add(currentLocation);
 
         // Show the current location in Google Map
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
         // Zoom in the Google Map
         mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet(getCompleteAddressString(latitude, longitude)));
 
-        // Setting onclick event listener for the map
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        //End location
+        String add = "227 Nguyễn Văn Cừ, Quận 5, Hồ Chí Minh";
 
+        APIService service =  RestService.getService().create(APIService.class);
+        Call<RLocation> call = service.getLocation(add, "false");
+
+        call.enqueue(new Callback<RLocation>() {
             @Override
-            public void onMapClick(LatLng point) {
+            public void onResponse(Call<RLocation> call, Response<RLocation> response) {
+                Result = response.body();
+                double lat = Double.parseDouble(Result.getResults().get(0).getGeometry().getLocation().getLat());
+                double lng = Double.parseDouble(Result.getResults().get(0).getGeometry().getLocation().getLng());
+                LatLng endLocation = new LatLng(lat, lng);
 
-                if (!isNetworkConnected()) {
-                    Toast.makeText(MapsActivity.this, "No Internet Connection!", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                // Already two locations
-                if (markerPoints.size() > 1) {
-                    markerPoints.clear();
-                    mMap.clear();
-                }
-
-                // Adding new item to the ArrayList
-                markerPoints.add(point);
-
+                markerPoints.add(endLocation);
                 // Creating MarkerOptions
                 MarkerOptions options = new MarkerOptions();
-
-                // Setting the position of the marker
-                options.position(point);
-
-                /**
-                 * For the start location, the color of marker is RED and
-                 * for the end location, the color of marker is GREEN.
-                 */
-                if (markerPoints.size() == 1) {
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                    options.title("Start Location").snippet(getCompleteAddressString(point.latitude, point.longitude));
-                } else if (markerPoints.size() == 2) {
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                    options.title("End Location").snippet(getCompleteAddressString(point.latitude, point.longitude));
-                }
+                options.position(endLocation);
+                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                options.title("End Location").snippet(getCompleteAddressString(endLocation.latitude, endLocation.longitude));
 
                 // Add new marker to the Google Map Android API V2
                 mMap.addMarker(options);
@@ -150,6 +133,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng origin = markerPoints.get(0);
                     LatLng dest = markerPoints.get(1);
 
+                    if (!isNetworkConnected()) {
+                        Toast.makeText(MapsActivity.this, "No Internet Connection!", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     // Getting URL to the Google Directions API
                     String url = getDirectionsUrl(origin, dest);
 
@@ -158,6 +146,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     // Start downloading json data from Google Directions API
                     downloadTask.execute(url);
                 }
+            }
+
+            @Override
+            public void onFailure(Call<RLocation> call, Throwable t) {
+                return;
             }
         });
     }
