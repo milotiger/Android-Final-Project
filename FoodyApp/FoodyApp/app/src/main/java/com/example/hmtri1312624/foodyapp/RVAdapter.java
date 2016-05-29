@@ -280,7 +280,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                         Picasso.with(MyApplication.getAppContext())
                                 .load("http:" + urlImages.get(Index))
                                 .into(imageShow);
-                        v.setId(++Index);
+                        if (Index == urlImages.size() - 1)
+                            v.setId(0);
+                        else v.setId(++Index);
                     }
                 }
             });
@@ -295,7 +297,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                         Picasso.with(MyApplication.getAppContext())
                                 .load("http:" + urlImages.get(Index))
                                 .into(imageShow);
-                        v.setId(--Index);
+                        if (Index == 0)
+                            v.setId(urlImages.size() - 1);
+                        else v.setId(--Index);
                     }
                 }
             });
