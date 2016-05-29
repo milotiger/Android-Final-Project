@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hmtri1312624.foodyapp.Global.Global;
 import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
@@ -88,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String Next = editSearch.getText().toString();
+                if (!Next.equals(""))
+                    Global.CurrentQuery = Next;
                 getData(Global.CurrentQuery);
                 Global.hideSoftInput(activity);
             }
@@ -109,6 +113,13 @@ public class MainActivity extends AppCompatActivity {
                 Global.hidePreloader();
                 Global.hideSoftInput(activity);
                 data = response.body();
+
+                if (data == null)
+                {
+                    Toast.makeText(getApplicationContext(), "Chúng tôi không tìm được địa điểm phù hợp yêu cầu của bạn!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 adapter = new RVAdapter(MainActivity.this, data, new CustomItemClickListener() {
                     @Override
                     public void onItemClick(View v, int position) {
