@@ -20,7 +20,6 @@ public class RestService {
         restAdapter = new Retrofit.Builder()
                 .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                //.setLogLevel(retrofit.RestAdapter.LogLevel.FULL)
                 .build();
 
         //Create an instance of the Service interface that we created from the Buider above

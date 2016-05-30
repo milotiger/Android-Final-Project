@@ -59,15 +59,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/imageAva"
+                android:layout_below="@+id/txtPrice"
                 android:id="@+id/txtTimeOpen"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtPrice"
+                android:textColor="#000"
+                android:layout_below="@+id/imageAva"
+                android:layout_marginTop="5dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/txtTimeOpen"
                 android:layout_marginTop="5dp"
-                android:textStyle="bold"
                 android:id="@+id/txtStatus"/>
 
             <LinearLayout

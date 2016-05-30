@@ -19,6 +19,7 @@ public class FoodyItemInfo {
     public List<String> OpenTime;
     public List<String> Price;
     public List<String> MorePic;
+    public List<String> MorePic_Full;
     public List<FoodyMenuItem> MenuItems;
     public List<CommentDetail> CommentDetails;
     public String Phone;

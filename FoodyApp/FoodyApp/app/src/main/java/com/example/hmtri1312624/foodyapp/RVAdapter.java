@@ -64,6 +64,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
     public void onBindViewHolder(ViewHolder holder, int position) {
         String Address = data.get(position).AddressLv1 + ", " + data.get(position).AddressLv2 + ", " + data.get(position).AddressLv3;
         List<String> urls = data.get(position).MorePic;
+        List<String> fullmorpics = data.get(position).MorePic_Full;
         String Country = "";
         String urlAva = data.get(position).Thumbnail;
         List<CommentDetail> cmts = data.get(position).CommentDetails;
@@ -73,6 +74,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             if(i < data.get(position).Tag.size() - 1)
                 Country += ", ";
         }
+        List<String> Price = data.get(position).Price;
         String time = "";
         for(int i = 0; i < data.get(position).OpenTime.size(); i++)
         {
@@ -85,7 +87,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
         String numcmt = data.get(position).Comments;
         String numcamera = data.get(position).Pictures;
         String rate = data.get(position).Rating;
-        holder.setItem(urlAva,data.get(position).Headline,Address,Country,time,stt,numcmt,numcamera,urls,cmts,rate);
+        holder.setItem(urlAva,data.get(position).Headline,Address,Country,Price,time,stt,numcmt,numcamera,urls,fullmorpics,cmts,rate);
     }
 
 
@@ -101,7 +103,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtName, txtAddress,txtCountry,txtTimeOpen,txtStt,txtNumCmt,txtNumCamera,txtRate;
+        public TextView txtName, txtAddress,txtCountry,txtPrice,txtTimeOpen,txtStt,txtNumCmt,txtNumCamera,txtRate;
         public ImageView imageAva;
         public Button btnLove, btnLocation, btnCmt, btnCamera, btnStar;
         public LinearLayout layout;
@@ -119,6 +121,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             txtNumCmt = (TextView)v.findViewById(R.id.txtNumCmt);
             txtNumCamera = (TextView)v.findViewById(R.id.txtNumCamera);
 
+            txtPrice = (TextView)v.findViewById(R.id.txtPrice);
             txtTimeOpen = (TextView)v.findViewById(R.id.txtTimeOpen);
             txtStt = (TextView)v.findViewById(R.id.txtStatus);
             txtRate = (TextView)v.findViewById(R.id.txtRate);
@@ -135,6 +138,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             txtAddress.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.ROBOTO));
             txtCountry.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.ROBOTO));
 
+            txtCountry.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),"Roboto-Medium.ttf"));
             txtTimeOpen.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.ROBOTO));
             txtStt.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),"Roboto-Medium.ttf"));
             txtRate.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),"Roboto-Medium.ttf"));
@@ -150,7 +154,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             context = v.getContext();
         }
 
-        public void setItem(String urlAva, String name, String address, String country, String time, String stt, String numcmt, String numcmr, List<String> morepics, final List<CommentDetail> cmts, String rate) {
+        public void setItem(String urlAva, String name, String address, String country, List<String> Price, String time, String stt, String numcmt, String numcmr, List<String> morepics, List<String> fullmorepics, final List<CommentDetail> cmts, String rate) {
             txtName.setText(name);
             txtAddress.setText(address);
             txtCountry.setText(country);
@@ -158,6 +162,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             txtNumCamera.setText(numcmr);
             txtTimeOpen.setText(time);
             txtRate.setText(rate);
+
+            if (Price.size() == 2)
+            {
+                txtPrice.setText(Price.get(0) + "VND - " + Price.get(1) + "VND");
+            }
 
             String Times[] = time.split(" - ");
 
@@ -177,7 +186,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
             txtStt.setText(stt);
             LoadAva(urlAva);
-            LoadImage(morepics);
+            LoadImage(morepics,fullmorepics);
             btnCmt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -226,7 +235,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                     .into(imageAva);
         }
 
-        public void LoadImage(final List<String> urls)
+        public void LoadImage(final List<String> urls, final List<String> fullpicurls)
         {
             for (int i = 0; i < urls.size(); i++) {
                 final ImageView imageView = new ImageView(MyApplication.getAppContext());
@@ -235,7 +244,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
                 imageView.setPadding(5,5,5,5);
                 Picasso.with(MyApplication.getAppContext())
-                        .load("http:" + urls.get(i).toString())
+                        .load("http:" + urls.get(i))
                         .into(imageView);
 
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(120, 120);
@@ -245,7 +254,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                     @Override
                     public void onClick(View v) {
                         //Toast.makeText(context,"ABC",Toast.LENGTH_LONG).show();
-                        showFullImage("http:" + urls.get(v.getId()));
+                        showFullImage("http:" + fullpicurls.get(v.getId()));
                     }
                 });
 
