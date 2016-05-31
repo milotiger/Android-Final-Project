@@ -73,6 +73,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker").snippet("Snippet"));
 
+        if (!isNetworkConnected()) {
+            Toast.makeText(MapsActivity.this, "No Internet Connection!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         // Enable MyLocation Layer of Google Map
         mMap.setMyLocationEnabled(true);
 
@@ -120,13 +125,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 markerPoints.add(endLocation);
                 // Creating MarkerOptions
-                MarkerOptions options = new MarkerOptions();
-                options.position(endLocation);
-                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                options.title("End Location").snippet(getCompleteAddressString(endLocation.latitude, endLocation.longitude));
-
+                MarkerOptions option = new MarkerOptions();
+                option.position(endLocation);
+                option.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                option.title("End Location");
                 // Add new marker to the Google Map Android API V2
-                mMap.addMarker(options);
+                mMap.addMarker(option);
 
                 // Checks, whether start and end locations are captured
                 if (markerPoints.size() >= 2) {
@@ -208,7 +212,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             br.close();
 
         }catch(Exception e){
-            Log.d("Exception while downloading url", e.toString());
+            Log.d("Ex w downloading url", e.toString());
         }finally{
             iStream.close();
             urlConnection.disconnect();
@@ -323,13 +327,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String state = addresses.get(0).getSubAdminArea();
                 String country = addresses.get(0).getCountryName();
                 strAdd = address + ", " + state + ", " + city + ", " + country;
-                Log.w("My Current location address", "" + strAdd);
+                Log.w("Current location", "" + strAdd);
             } else {
-                Log.w("My Current location address", "No Address returned!");
+                Log.w("Current location", "No Address returned!");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.w("My Current location address", "Can not get Address!");
+            Log.w("Current location", "Can't get Address!");
         }
         return strAdd;
     }
