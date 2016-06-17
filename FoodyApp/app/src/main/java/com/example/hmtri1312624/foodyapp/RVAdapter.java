@@ -19,6 +19,7 @@ import com.example.hmtri1312624.foodyapp.Global.Global;
 import com.example.hmtri1312624.foodyapp.ImageGallery.GalleryActivity;
 import com.example.hmtri1312624.foodyapp.Model.CommentDetail;
 import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
+import com.example.hmtri1312624.foodyapp.Service.RestService;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
@@ -27,6 +28,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by M-Tae on 4/7/2016.
@@ -54,10 +59,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         String Address = data.get(position).AddressLv1 + ", " + data.get(position).AddressLv2 + ", " + data.get(position).AddressLv3;
-        List<String> urls = data.get(position).MorePic;
         String Country = "";
-        String urlAva = data.get(position).Thumbnail;
-        List<CommentDetail> cmts = data.get(position).CommentDetails;
         for(int i = 0; i < data.get(position).Tag.size(); i++)
         {
             Country += data.get(position).Tag.get(i);
@@ -73,10 +75,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
         }
         String stt = ""; // will change in holder.setItem method;
 
-        String numcmt = data.get(position).Comments;
-        String numcamera = data.get(position).Pictures;
-        String rate = data.get(position).Rating;
-        holder.setItem(urlAva,data.get(position).Headline,Address,Country,time,stt,numcmt,numcamera,urls, data.get(position).MorePic_Full,cmts,rate, data.get(position).Price);
+        holder.setItem(data.get(position),Address,Country,time,stt);
     }
 
 
@@ -143,14 +142,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             context = v.getContext();
         }
 
-        public void setItem(String urlAva, String name, String address, String country, String time, String stt, String numcmt, String numcmr, List<String> morepics, final List<String> morepics_full, final List<CommentDetail> cmts, String rate, List<String> Price) {
-            txtName.setText(name);
+        public void setItem(final FoodyItemInfo data, String address, String country, String time, String stt) {
+            txtName.setText(data.Headline);
             txtAddress.setText(address);
             txtCountry.setText(country);
-            txtNumCmt.setText(numcmt);
-            txtNumCamera.setText(numcmr);
+            txtNumCmt.setText(data.Comments);
+            txtNumCamera.setText(data.Pictures);
             txtTimeOpen.setText(time);
-            txtRate.setText(rate);
+            txtRate.setText(data.Rating);
 
             String Times[] = time.split(" - ");
 
@@ -168,28 +167,49 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             }
             else stt = "N/A";
 
-            if (Price.size() == 2)
+            if (data.Price.size() == 2)
             {
-                txtPrice.setText(Price.get(0) + "đ - " + Price.get(1) + "đ");
+                txtPrice.setText(data.Price.get(0) + "đ - " + data.Price.get(1) + "đ");
             }
 
 
             txtStt.setText(stt);
-            LoadAva(urlAva);
-            LoadImage(morepics, morepics_full);
+            LoadAva(data.Thumbnail);
+            LoadImage(data.MorePic, data.MorePic_Full);
             btnCmt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ShowComment(cmts);
+                    ShowComment(data.CommentDetails);
                 }
             });
             btnCamera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Global.currentImageList = morepics_full;
+                    RestService restService = new RestService();
 
-                    Intent i = new Intent(context, GalleryActivity.class);
+                    Call<FoodyItemInfo> Result = restService.getService().GetAlbum(data);
+
+                    Result.enqueue(new Callback<FoodyItemInfo>() {
+                        @Override
+                        public void onResponse(Call<FoodyItemInfo> call, Response<FoodyItemInfo> response) {
+                            Global.currentImageList = response.body().FullSizePics;
+
+                            Intent i = new Intent(context, GalleryActivity.class);
+                            context.startActivity(i);
+                        }
+
+                        @Override
+                        public void onFailure(Call<FoodyItemInfo> call, Throwable t) {
+
+                        }
+                    });
+                }
+            });
+            btnLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(context, MapsActivity.class);
                     context.startActivity(i);
                 }
             });
