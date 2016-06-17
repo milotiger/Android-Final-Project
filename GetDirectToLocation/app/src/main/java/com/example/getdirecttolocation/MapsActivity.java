@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -47,6 +48,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     public static ArrayList<LatLng> markerPoints;
     public RLocation Result;
+    private LocationListener listener;
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,83 +83,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Enable MyLocation Layer of Google Map
         mMap.setMyLocationEnabled(true);
-
-        // Get LocationManager object from System Service LOCATION_SERVICE
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        // Create a criteria object to retrieve provider
-        Criteria criteria = new Criteria();
-        // Get the name of the best provider
-        String provider = locationManager.getBestProvider(criteria, true);
-        // Get Current Location
-        Location myLocation = locationManager.getLastKnownLocation(provider);
-
-        // set map type
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        // Get latitude of the current location
-        double latitude = myLocation.getLatitude();
-        // Get longitude of the current location
-        double longitude = myLocation.getLongitude();
-        // Create a LatLng object for the current location
-        LatLng currentLocation = new LatLng(latitude, longitude);
-
-        markerPoints.add(currentLocation);
-
-        // Show the current location in Google Map
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-        // Zoom in the Google Map
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet(getCompleteAddressString(latitude, longitude)));
+        getCurrentLocation();
 
         //End location
         String add = "227 Nguyễn Văn Cừ, Quận 5, Hồ Chí Minh";
-
-        APIService service =  RestService.getService().create(APIService.class);
-        Call<RLocation> call = service.getLocation(add, "false");
-
-        call.enqueue(new Callback<RLocation>() {
-            @Override
-            public void onResponse(Call<RLocation> call, Response<RLocation> response) {
-                Result = response.body();
-                double lat = Double.parseDouble(Result.getResults().get(0).getGeometry().getLocation().getLat());
-                double lng = Double.parseDouble(Result.getResults().get(0).getGeometry().getLocation().getLng());
-                LatLng endLocation = new LatLng(lat, lng);
-
-                markerPoints.add(endLocation);
-                // Creating MarkerOptions
-                MarkerOptions option = new MarkerOptions();
-                option.position(endLocation);
-                option.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                option.title("End Location");
-                // Add new marker to the Google Map Android API V2
-                mMap.addMarker(option);
-
-                // Checks, whether start and end locations are captured
-                if (markerPoints.size() >= 2) {
-                    LatLng origin = markerPoints.get(0);
-                    LatLng dest = markerPoints.get(1);
-
-                    if (!isNetworkConnected()) {
-                        Toast.makeText(MapsActivity.this, "No Internet Connection!", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    // Getting URL to the Google Directions API
-                    String url = getDirectionsUrl(origin, dest);
-
-                    DownloadTask downloadTask = new DownloadTask();
-
-                    // Start downloading json data from Google Directions API
-                    downloadTask.execute(url);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RLocation> call, Throwable t) {
-                return;
-            }
-        });
+        getDirect(add);
     }
 
     private String getDirectionsUrl(LatLng origin,LatLng dest){
@@ -342,5 +275,116 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    private void getCurrentLocation() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        Location myLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(new Criteria(), true));
+
+        if (myLocation == null) {
+            myLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+        }
+
+        if (myLocation != null) {
+            // Get latitude of the current location
+            double latitude = myLocation.getLatitude();
+            // Get longitude of the current location
+            double longitude = myLocation.getLongitude();
+            // Create a LatLng object for the current location
+            LatLng currentLocation = new LatLng(latitude, longitude);
+
+            markerPoints.add(currentLocation);
+
+            // Show the current location in Google Map
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+            // Zoom in the Google Map
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet(getCompleteAddressString(latitude, longitude)));
+        }
+        else {
+            Toast.makeText(MapsActivity.this, "Can't get your location!!!", Toast.LENGTH_SHORT).show();
+        }
+
+        listener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                LatLng updateLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(updateLocation));
+                // Zoom in the Google Map
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                if (LocationManager.GPS_PROVIDER.equals(provider)) {
+                    Toast.makeText(MapsActivity.this, "Turn on GPS", Toast.LENGTH_SHORT).show();
+                    getCurrentLocation();
+                }
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                if (LocationManager.GPS_PROVIDER.equals(provider)) {
+                    Toast.makeText(MapsActivity.this, "Turn off GPS", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        //// Create a criteria object to retrieve provider
+        //Criteria criteria = new Criteria();
+        //// Get the name of the best provider
+        //String provider = locationManager.getBestProvider(criteria, true);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, listener);
+    }
+
+    private void getDirect(final String address) {
+        APIService service =  RestService.getService().create(APIService.class);
+        Call<RLocation> call = service.getLocation(address, "false");
+
+        call.enqueue(new Callback<RLocation>() {
+            @Override
+            public void onResponse(Call<RLocation> call, Response<RLocation> response) {
+                Result = response.body();
+                double lat = Double.parseDouble(Result.getResults().get(0).getGeometry().getLocation().getLat());
+                double lng = Double.parseDouble(Result.getResults().get(0).getGeometry().getLocation().getLng());
+                LatLng endLocation = new LatLng(lat, lng);
+
+                markerPoints.add(endLocation);
+                // Creating MarkerOptions
+                MarkerOptions option = new MarkerOptions();
+                option.position(endLocation);
+                option.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                option.title("End Location").snippet(address);
+                // Add new marker to the Google Map Android API V2
+                mMap.addMarker(option);
+
+                // Checks, whether start and end locations are captured
+                if (markerPoints.size() >= 2) {
+                    LatLng origin = markerPoints.get(0);
+                    LatLng dest = markerPoints.get(1);
+
+                    if (!isNetworkConnected()) {
+                        Toast.makeText(MapsActivity.this, "No Internet Connection!", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    // Getting URL to the Google Directions API
+                    String url = getDirectionsUrl(origin, dest);
+
+                    DownloadTask downloadTask = new DownloadTask();
+
+                    // Start downloading json data from Google Directions API
+                    downloadTask.execute(url);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RLocation> call, Throwable t) {
+                return;
+            }
+        });
     }
 }
