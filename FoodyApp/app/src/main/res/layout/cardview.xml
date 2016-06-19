@@ -58,6 +58,18 @@
                 android:layout_marginTop="10dp"/>
 
             <TextView
+                android:id="@+id/btnMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageAva"
+                android:clickable="true"
+                android:textColor="#F44336"
+                android:textStyle="bold"
+                android:text="Menu"
+                android:background="#00000000"
+                android:textSize="15dp"/>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtPrice"
@@ -67,7 +79,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/imageAva"
+                android:layout_below="@+id/btnMenu"
                 android:id="@+id/txtTimeOpen"
                 android:text="Open Time"/>
 
@@ -105,27 +117,27 @@
 
             </LinearLayout>
 
-            <Button
+            <ToggleButton
                 android:id="@+id/btnLove"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="12dp"
                 android:layout_below="@+id/layoutImage"
                 style="?android:attr/buttonStyleSmall"
-                android:text="@string/icon_heart"
-                android:background="#00000000"
-                android:textSize="20sp"/>
+                android:background="@drawable/toggle_selector"
+                android:textOff=""
+                android:textOn=""/>
 
             <Button
                 android:id="@+id/btnLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_toRightOf="@+id/txtNumCamera"
+                android:layout_marginLeft="5dp"
                 android:layout_below="@+id/layoutImage"
+                android:layout_marginTop="12dp"
                 style="?android:attr/buttonStyleSmall"
-                android:text="@string/icon_location"
-                android:background="#00000000"
-                android:textColor="#000"
-                android:textSize="20sp"/>
+                android:background="@drawable/ic_location_on_black_24dp"/>
 
             <TextView
                 android:layout_width="wrap_content"

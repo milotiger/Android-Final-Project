@@ -23,6 +23,9 @@ public interface APIService {
     @POST("api/fullsizealbum")
     Call<FoodyItemInfo> GetAlbum(@Body FoodyItemInfo foodyitem);
 
+    @POST("api/menuitem")
+    Call<FoodyItemInfo> GetMenu(@Body FoodyItemInfo foodyitem);
+
     @GET("maps/api/geocode/json?")
     Call<RLocation> getLocation(@Query("address") String address, @Query("sensor") String sensor);
 }

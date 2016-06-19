@@ -30,10 +30,8 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     RVAdapter adapter;
-    private ProgressBar bar;
     List<FoodyItemInfo> data;
     RecyclerView rv;
-    LinearLayout layout;
     Button btnNext,btnSearchNext;
     EditText editSearch;
     RelativeLayout layoutSearch;
@@ -58,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         editSearch = (EditText)findViewById(R.id.editSearchNext);
         editSearch.setTypeface(FontManager.getTypeface(MainActivity.this,FontManager.ROBOTO));
+        editSearch.setText(Global.CurrentQuery);
         editSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -120,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 if (data == null)
                 {
                     MyAlertDialog.ShowDialog("We did not found any places which has your food",activity);
+                    btnNext.setVisibility(View.VISIBLE);
+                    layoutSearch.setVisibility(View.VISIBLE);
                     return;
                 }
 

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.example.hmtri1312624.foodyapp.Global.Global;
 import com.example.hmtri1312624.foodyapp.ImageGallery.GalleryActivity;
@@ -91,9 +93,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtName, txtAddress,txtCountry,txtTimeOpen,txtStt,txtNumCmt,txtNumCamera,txtRate, txtPrice;
+        public TextView txtName, txtAddress,txtCountry,txtTimeOpen,txtStt,txtNumCmt,txtNumCamera,txtRate, txtPrice, btnMenu;
         public ImageView imageAva;
-        public Button btnLove, btnLocation, btnCmt, btnCamera, btnStar;
+        public Button btnLocation, btnCmt, btnCamera, btnStar;
+        public ToggleButton btnLove;
         public LinearLayout layout;
         public RecyclerView rvcmt;
         public RVCAdapter Cadapter;
@@ -114,11 +117,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             txtRate = (TextView)v.findViewById(R.id.txtRate);
             txtPrice = (TextView)v.findViewById(R.id.txtPrice);
 
-            btnLove = (Button)v.findViewById(R.id.btnLove);
+            btnLove = (ToggleButton)v.findViewById(R.id.btnLove);
             btnLocation = (Button)v.findViewById(R.id.btnLocation);
             btnCmt = (Button)v.findViewById(R.id.btnCmt);
             btnCamera = (Button)v.findViewById(R.id.btnCamera);
             btnStar = (Button)v.findViewById(R.id.btnStar);
+            btnMenu = (TextView) v.findViewById(R.id.btnMenu);
 
             layout = (LinearLayout)v.findViewById(R.id.listimage);
 
@@ -131,18 +135,16 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             txtStt.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),"Roboto-Medium.ttf"));
             txtRate.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),"Roboto-Medium.ttf"));
 
-            btnLove.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
-            btnLocation.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
             btnCmt.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
             btnCamera.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
             btnStar.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),FontManager.FONTAWESOME));
-
+            btnMenu.setTypeface(FontManager.getTypeface(MyApplication.getAppContext(),"Roboto-Medium.ttf"));
             //Important line, fix Unable to add window — token null is not valid for dialog
             // dont use AppContext for new Dialog, should use ...Activity.this
             context = v.getContext();
         }
 
-        public void setItem(final FoodyItemInfo data, String address, String country, String time, String stt) {
+        public void setItem(final FoodyItemInfo data, final String address, String country, String time, String stt) {
             txtName.setText(data.Headline);
             txtAddress.setText(address);
             txtCountry.setText(country);
@@ -185,7 +187,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnCamera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Global.showPreloader(context, "Loading Image...");
                     RestService restService = new RestService();
 
                     Call<FoodyItemInfo> Result = restService.getService().GetAlbum(data);
@@ -193,6 +195,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                     Result.enqueue(new Callback<FoodyItemInfo>() {
                         @Override
                         public void onResponse(Call<FoodyItemInfo> call, Response<FoodyItemInfo> response) {
+                            Global.hidePreloader();
                             Global.currentImageList = response.body().FullSizePics;
 
                             Intent i = new Intent(context, GalleryActivity.class);
@@ -210,7 +213,44 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(context, MapsActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("Address",address);
+                    bundle.putString("EndLocation",data.Headline);
+                    i.putExtra("MyPackage",bundle);
                     context.startActivity(i);
+                }
+            });
+
+            btnMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Global.showPreloader(context,"Loading menu...");
+                    RestService restService = new RestService();
+
+                    Call<FoodyItemInfo> menu = restService.getService().GetMenu(data);
+
+                    menu.enqueue(new Callback<FoodyItemInfo>() {
+                        @Override
+                        public void onResponse(Call<FoodyItemInfo> call, Response<FoodyItemInfo> response) {
+
+                            Global.hidePreloader();
+                            if(response.body().MenuSets.size() == 0)
+                            {
+                                MyAlertDialog.ShowDialog("Chưa có menu cho quán ăn này",context);
+                                return;
+                            }
+                            else {
+                                MyAlertDialog.ShowMenuDialog(context, response.body());
+                            }
+                            //Intent i = new Intent(context, GalleryActivity.class);
+                            //context.startActivity(i);
+                        }
+
+                        @Override
+                        public void onFailure(Call<FoodyItemInfo> call, Throwable t) {
+
+                        }
+                    });
                 }
             });
         }

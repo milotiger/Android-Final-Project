@@ -2,6 +2,7 @@ package com.example.hmtri1312624.foodyapp;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -54,13 +55,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public RLocation Result;
     private LocationListener listener;
     private LocationManager locationManager;
+    private String EndLocation = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         markerPoints = new ArrayList<LatLng>();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        findViewById(R.id.map).setDrawingCacheEnabled(true);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -100,8 +104,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         getCurrentLocation();
 
+        Intent i = getIntent();
+        Bundle bundle = i.getBundleExtra("MyPackage");
         //End location
-        String add = "227 Nguyễn Văn Cừ, Quận 5, Hồ Chí Minh";
+        String add = bundle.getString("Address");
+        EndLocation = bundle.getString("EndLocation");
+
         getDirect(add);
     }
 
@@ -302,10 +310,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        Location myLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(new Criteria(), true));
+        Location myLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
 
-        if (myLocation == null) {
+
+        if (myLocation == null && myLocation.getAccuracy() < 50) {
             myLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+            if (myLocation == null && myLocation.getAccuracy() < 50) {
+                myLocation = locationManager.getLastKnownLocation(locationManager.PASSIVE_PROVIDER);
+                if (myLocation == null && myLocation.getAccuracy() < 50) {
+                    myLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(new Criteria(), true));
+                }
+            }
         }
 
         if (myLocation != null) {
@@ -324,9 +339,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
             mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You are here!").snippet(getCompleteAddressString(latitude, longitude)));
         }
-        else {
-            Toast.makeText(MapsActivity.this, "Can't get your location!!!", Toast.LENGTH_SHORT).show();
-        }
+//        else {
+//            Toast.makeText(MapsActivity.this, "Can't get your location!!!", Toast.LENGTH_SHORT).show();
+//        }
 
         listener = new LocationListener() {
             @Override
@@ -359,7 +374,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Criteria criteria = new Criteria();
         //// Get the name of the best provider
         //String provider = locationManager.getBestProvider(criteria, true);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, listener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
     }
 
     private void getDirect(final String address) {
@@ -370,6 +385,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onResponse(Call<RLocation> call, Response<RLocation> response) {
                 Result = response.body();
+
+                if (Result.getResults().size() == 0) {
+                    return;
+                }
+
                 double lat = Double.parseDouble(Result.getResults().get(0).getGeometry().getLocation().getLat());
                 double lng = Double.parseDouble(Result.getResults().get(0).getGeometry().getLocation().getLng());
                 LatLng endLocation = new LatLng(lat, lng);
@@ -379,7 +399,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 MarkerOptions option = new MarkerOptions();
                 option.position(endLocation);
                 option.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                option.title("End Location").snippet(address);
+                option.title(EndLocation).snippet(address);
                 // Add new marker to the Google Map Android API V2
                 mMap.addMarker(option);
 

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.hmtri1312624.foodyapp.Model.FoodyMenuItem;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,7 @@ import java.util.List;
 public class Global {
     public static String CurrentQuery;
     public static List<String> currentImageList;
+    public static List<FoodyMenuItem> currentMenuList;
     static ProgressDialog dialog;
 
     public static void showPreloader(Context context,String Message)
