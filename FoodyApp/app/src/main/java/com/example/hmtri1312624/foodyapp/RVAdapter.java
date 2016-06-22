@@ -187,26 +187,33 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnCamera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Global.showPreloader(context, "Loading Image...");
-                    RestService restService = new RestService();
+                    if(Global.currentImageList != null){
+                        Intent i = new Intent(context, GalleryActivity.class);
+                        context.startActivity(i);
+                    }
 
-                    Call<FoodyItemInfo> Result = restService.getService().GetAlbum(data);
+                    else {
+                        Global.showPreloader(context, "Loading Image...");
+                        RestService restService = new RestService();
 
-                    Result.enqueue(new Callback<FoodyItemInfo>() {
-                        @Override
-                        public void onResponse(Call<FoodyItemInfo> call, Response<FoodyItemInfo> response) {
-                            Global.hidePreloader();
-                            Global.currentImageList = response.body().FullSizePics;
+                        Call<FoodyItemInfo> Result = restService.getService().GetAlbum(data);
 
-                            Intent i = new Intent(context, GalleryActivity.class);
-                            context.startActivity(i);
-                        }
+                        Result.enqueue(new Callback<FoodyItemInfo>() {
+                            @Override
+                            public void onResponse(Call<FoodyItemInfo> call, Response<FoodyItemInfo> response) {
+                                Global.hidePreloader();
+                                Global.currentImageList = response.body().FullSizePics;
 
-                        @Override
-                        public void onFailure(Call<FoodyItemInfo> call, Throwable t) {
+                                Intent i = new Intent(context, GalleryActivity.class);
+                                context.startActivity(i);
+                            }
 
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<FoodyItemInfo> call, Throwable t) {
+
+                            }
+                        });
+                    }
                 }
             });
             btnLocation.setOnClickListener(new View.OnClickListener() {
@@ -224,30 +231,52 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Global.showPreloader(context,"Loading menu...");
+                    if(Global.currentMenuSet != null)
+                    {
+                        MyAlertDialog.ShowMenuDialog(context,Global.currentMenuSet);
+                    }
+
+                    else {
+                        Global.showPreloader(context,"Loading menu...");
+                        RestService restService = new RestService();
+
+                        Call<FoodyItemInfo> menu = restService.getService().GetMenu(data);
+
+                        menu.enqueue(new Callback<FoodyItemInfo>() {
+                            @Override
+                            public void onResponse(Call<FoodyItemInfo> call, Response<FoodyItemInfo> response) {
+
+                                Global.hidePreloader();
+                                if (response.body().MenuSets.size() == 0) {
+                                    MyAlertDialog.ShowDialog("Chưa có menu cho quán ăn này", context);
+                                    return;
+                                } else {
+                                    Global.currentMenuSet = response.body().MenuSets;
+                                    MyAlertDialog.ShowMenuDialog(context,Global.currentMenuSet);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<FoodyItemInfo> call, Throwable t) {
+                            }
+                        });
+                    }
+                }
+            });
+            btnLove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Global.showPreloader(context,"Adding....");
                     RestService restService = new RestService();
-
-                    Call<FoodyItemInfo> menu = restService.getService().GetMenu(data);
-
-                    menu.enqueue(new Callback<FoodyItemInfo>() {
+                    Call<Boolean> call = restService.getService().Bookmark(Global.currentAcc.userid,data);
+                    call.enqueue(new Callback<Boolean>() {
                         @Override
-                        public void onResponse(Call<FoodyItemInfo> call, Response<FoodyItemInfo> response) {
-
+                        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                             Global.hidePreloader();
-                            if(response.body().MenuSets.size() == 0)
-                            {
-                                MyAlertDialog.ShowDialog("Chưa có menu cho quán ăn này",context);
-                                return;
-                            }
-                            else {
-                                MyAlertDialog.ShowMenuDialog(context, response.body());
-                            }
-                            //Intent i = new Intent(context, GalleryActivity.class);
-                            //context.startActivity(i);
                         }
 
                         @Override
-                        public void onFailure(Call<FoodyItemInfo> call, Throwable t) {
+                        public void onFailure(Call<Boolean> call, Throwable t) {
 
                         }
                     });

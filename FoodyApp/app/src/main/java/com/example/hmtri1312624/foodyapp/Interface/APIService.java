@@ -26,6 +26,12 @@ public interface APIService {
     @POST("api/menuitem")
     Call<FoodyItemInfo> GetMenu(@Body FoodyItemInfo foodyitem);
 
+    @POST("api/addbookmark/{userid}")
+    Call<Boolean> Bookmark(@Path("userid") String id, @Body FoodyItemInfo foodyItemInfo);
+
+    @GET("api/showbookmark/{userid}")
+    Call<List<FoodyItemInfo>> ShowBookmark(@Path("userid") String id);
+
     @GET("maps/api/geocode/json?")
     Call<RLocation> getLocation(@Query("address") String address, @Query("sensor") String sensor);
 }

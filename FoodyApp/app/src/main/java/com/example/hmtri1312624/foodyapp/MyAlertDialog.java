@@ -13,6 +13,8 @@ import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
 import com.example.hmtri1312624.foodyapp.Model.FoodyMenuItem;
 import com.example.hmtri1312624.foodyapp.Model.FoodyMenuSet;
 
+import java.util.List;
+
 /**
  * Created by M-Tae on 5/29/2016.
  */
@@ -31,14 +33,14 @@ public class MyAlertDialog {
         alertDialog.show();
     }
 
-    public static void ShowMenuDialog(final Context context, final FoodyItemInfo item){
+    public static void ShowMenuDialog(final Context context, final List<FoodyMenuSet> item){
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
         builderSingle.setTitle("Menu Sets");
 
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 context,
                 android.R.layout.select_dialog_singlechoice);
-        for (FoodyMenuSet menu : item.MenuSets)
+        for (FoodyMenuSet menu : item)
         {
             arrayAdapter.add(menu.Name);
         }
@@ -57,8 +59,8 @@ public class MyAlertDialog {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(item.MenuSets.get(which).Dishes.size() != 0) {
-                            Global.currentMenuList = item.MenuSets.get(which).Dishes;
+                        if(item.get(which).Dishes.size() != 0) {
+                            Global.currentMenuList = item.get(which).Dishes;
 
                             Intent i = new Intent(context, MenuActivity.class);
                             context.startActivity(i);

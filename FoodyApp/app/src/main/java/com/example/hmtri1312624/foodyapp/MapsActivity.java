@@ -20,6 +20,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.example.hmtri1312624.foodyapp.Global.Global;
 import com.example.hmtri1312624.foodyapp.Interface.APIService;
 import com.example.hmtri1312624.foodyapp.Service.RestGoogleService;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -110,7 +111,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String add = bundle.getString("Address");
         EndLocation = bundle.getString("EndLocation");
 
+        Global.showPreloader(this,"Loading location....");
         getDirect(add);
+
     }
 
     private String getDirectionsUrl(LatLng origin,LatLng dest){
@@ -313,11 +316,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location myLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
 
 
-        if (myLocation == null && myLocation.getAccuracy() < 50) {
+        if (myLocation == null) {
             myLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-            if (myLocation == null && myLocation.getAccuracy() < 50) {
+            if (myLocation == null) {
                 myLocation = locationManager.getLastKnownLocation(locationManager.PASSIVE_PROVIDER);
-                if (myLocation == null && myLocation.getAccuracy() < 50) {
+                if (myLocation == null) {
                     myLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(new Criteria(), true));
                 }
             }
@@ -384,6 +387,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         call.enqueue(new Callback<RLocation>() {
             @Override
             public void onResponse(Call<RLocation> call, Response<RLocation> response) {
+                Global.hidePreloader();
                 Result = response.body();
 
                 if (Result.getResults().size() == 0) {

@@ -6,7 +6,10 @@ import android.content.Context;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.hmtri1312624.foodyapp.Model.Account;
+import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
 import com.example.hmtri1312624.foodyapp.Model.FoodyMenuItem;
+import com.example.hmtri1312624.foodyapp.Model.FoodyMenuSet;
 
 import java.util.List;
 
@@ -15,8 +18,11 @@ import java.util.List;
  */
 public class Global {
     public static String CurrentQuery;
-    public static List<String> currentImageList;
+    public static List<String> currentImageList = null;
     public static List<FoodyMenuItem> currentMenuList;
+    public static List<FoodyMenuSet> currentMenuSet = null;
+    public static Account currentAcc = null;
+    public static String MyPref = "MyPrefs";
     static ProgressDialog dialog;
 
     public static void showPreloader(Context context,String Message)

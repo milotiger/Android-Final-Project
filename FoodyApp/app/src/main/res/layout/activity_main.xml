@@ -3,10 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:id="@+id/btnShowBookMark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Bookmark"
+        android:layout_toRightOf="@+id/login_button"/>
+
     <ScrollView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_centerInParent="true">
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -33,11 +47,12 @@
 
                 <Button
                     android:id="@+id/btnSearchNext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="35dp"
                     android:layout_height="wrap_content"
                     android:text="@string/icon_search"
                     android:layout_toRightOf="@+id/editSearchNext"
                     android:background="#00000000"/>
+
             </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
