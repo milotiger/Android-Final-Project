@@ -1,10 +1,12 @@
 package com.example.hmtri1312624.foodyapp.Model;
 
+import java.util.List;
+
 /**
  * Created by Anh Tu Vo on 06/21/2016.
  */
 public class Account {
-    public Account(String id,String first_name, String last_name, String gender, String email, String birthday, String location) {
+    public Account(String id,String first_name, String last_name, String gender, String email, String birthday, String location, List<FoodyItemInfo> menu) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.gender = gender;
@@ -12,6 +14,7 @@ public class Account {
         this.birthday = birthday;
         this.location = location;
         userid = id;
+        Favorite = menu;
     }
 
     public Account() {
@@ -25,4 +28,5 @@ public class Account {
     public String birthday;
     public String location;
     public String userid;
+    public List<FoodyItemInfo> Favorite;
 }

@@ -19,12 +19,14 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import com.example.hmtri1312624.foodyapp.Global.Global;
 import com.example.hmtri1312624.foodyapp.Model.Account;
 import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
 import com.example.hmtri1312624.foodyapp.Service.RestService;
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rv;
     Button btnNext,btnSearchNext,btnShow;
     EditText editSearch;
+    TextView facebookname;
     RelativeLayout layoutSearch;
     Context context;
     Activity activity;
@@ -147,13 +150,37 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //for facebook login
+        facebookname = (TextView)findViewById(R.id.txtfacebookname);
+
         sharedpreferences = getSharedPreferences(Global.MyPref, Context.MODE_PRIVATE);
 
-        Global.currentAcc.userid = sharedpreferences.getString("UserID","xxx"); //default ID = xxx
+        //logout
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(
+                    AccessToken oldAccessToken,
+                    AccessToken currentAccessToken) {
 
-        if(Global.currentAcc.userid.compareTo("xxx") == 0)
+                if (currentAccessToken == null){
+                    facebookname.setText("");
+                    btnShow.setVisibility(View.GONE);
+                    Global.currentAcc = new Account();
+                }
+            }
+        };
+
+        //check login or not login
+        AccessToken At = AccessToken.getCurrentAccessToken();
+        if(At == null)
         {
+            facebookname.setText("");
+            btnShow.setVisibility(View.GONE);
             Global.currentAcc = new Account();
+        }
+        //already login
+        else{
+            facebookname.setText(sharedpreferences.getString("UserName","Default"));
+            Global.currentAcc.userid = sharedpreferences.getString("UserID","xxx");
         }
         //end for facebook login
         btnNext.setVisibility(View.GONE);
@@ -177,9 +204,8 @@ public class MainActivity extends AppCompatActivity {
         public void onSuccess(LoginResult loginResult) {
             Global.currentAcc.userid = loginResult.getAccessToken().getUserId();
 
-            SharedPreferences.Editor editor = sharedpreferences.edit();
+            final SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.putString("UserID",Global.currentAcc.userid);
-            editor.apply();
 
             GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                 @Override
@@ -187,6 +213,10 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         Global.currentAcc.first_name = object.getString("first_name");
                         Global.currentAcc.last_name = object.getString("last_name");
+                        editor.putString("UserName",Global.currentAcc.first_name + " " + Global.currentAcc.last_name);
+                        editor.apply();
+                        facebookname.setText(Global.currentAcc.first_name + " " + Global.currentAcc.last_name);
+                        btnShow.setVisibility(View.VISIBLE);
                     } catch (JSONException e) {
                         Log.e("Error:", e.toString());
                     }
@@ -200,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onCancel() {
-
         }
 
         @Override
