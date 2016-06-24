@@ -62,18 +62,21 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
     public void onBindViewHolder(ViewHolder holder, int position) {
         String Address = data.get(position).AddressLv1 + ", " + data.get(position).AddressLv2 + ", " + data.get(position).AddressLv3;
         String Country = "";
-        for(int i = 0; i < data.get(position).Tag.size(); i++)
-        {
-            Country += data.get(position).Tag.get(i);
-            if(i < data.get(position).Tag.size() - 1)
-                Country += ", ";
+        if(data.get(position).Tag != null) {
+            for (int i = 0; i < data.get(position).Tag.size(); i++) {
+                Country += data.get(position).Tag.get(i);
+                if (i < data.get(position).Tag.size() - 1)
+                    Country += ", ";
+            }
         }
+
         String time = "";
-        for(int i = 0; i < data.get(position).OpenTime.size(); i++)
-        {
-            time += data.get(position).OpenTime.get(i);
-            if(i < data.get(position).OpenTime.size() - 1)
-                time += " - ";
+        if(data.get(position).OpenTime != null) {
+            for (int i = 0; i < data.get(position).OpenTime.size(); i++) {
+                time += data.get(position).OpenTime.get(i);
+                if (i < data.get(position).OpenTime.size() - 1)
+                    time += " - ";
+            }
         }
         String stt = ""; // will change in holder.setItem method;
 
@@ -153,6 +156,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             txtTimeOpen.setText(time);
             txtRate.setText(data.Rating);
 
+            Global.isAlready = false;
             String Times[] = time.split(" - ");
 
             if (Times.length == 2) {
@@ -178,12 +182,27 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             txtStt.setText(stt);
             LoadAva(data.Thumbnail);
             LoadImage(data.MorePic, data.MorePic_Full);
+
+            //check exists in favorite list
+            if(Global.currentAcc.userid != null && Global.currentAcc.Favorite != null) {
+                Global.isAlready = false;
+                btnLove.setChecked(false);
+                for (FoodyItemInfo item : Global.currentAcc.Favorite) {
+                    if (data.AddressLv1.compareTo(item.AddressLv1) == 0
+                            && data.AddressLv2.compareTo(item.AddressLv2) == 0) {
+                        btnLove.setChecked(true);
+                        Global.isAlready = true;
+                    }
+                }
+            }
+
             btnCmt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ShowComment(data.CommentDetails);
                 }
             });
+
             btnCamera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -221,7 +240,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                 public void onClick(View v) {
                     Intent i = new Intent(context, MapsActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString("Address",address);
+                    bundle.putString("AddLv1", data.AddressLv1);
+                    bundle.putString("AddLv2", data.AddressLv2);
                     bundle.putString("EndLocation",data.Headline);
                     i.putExtra("MyPackage",bundle);
                     context.startActivity(i);
@@ -236,6 +256,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                         MyAlertDialog.ShowMenuDialog(context,Global.currentMenuSet);
                     }
 
+                    if(data.MenuSets != null){
+                        Global.currentMenuSet = data.MenuSets;
+                        MyAlertDialog.ShowMenuDialog(context,Global.currentMenuSet);
+                    }
+
                     else {
                         Global.showPreloader(context,"Loading menu...");
                         RestService restService = new RestService();
@@ -247,7 +272,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                             public void onResponse(Call<FoodyItemInfo> call, Response<FoodyItemInfo> response) {
 
                                 Global.hidePreloader();
-                                if (response.body().MenuSets.size() == 0) {
+                                if (response.body().MenuSets == null) {
                                     MyAlertDialog.ShowDialog("Chưa có menu cho quán ăn này", context);
                                     return;
                                 } else {
@@ -263,23 +288,59 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                     }
                 }
             });
+
             btnLove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Global.showPreloader(context,"Adding....");
-                    RestService restService = new RestService();
-                    Call<Boolean> call = restService.getService().Bookmark(Global.currentAcc.userid,data);
-                    call.enqueue(new Callback<Boolean>() {
-                        @Override
-                        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                            Global.hidePreloader();
-                        }
+                    if(Global.currentAcc.userid == null){
+                        btnLove.setChecked(false);
+                        MyAlertDialog.ShowDialog("Please Login To Adding...",context);
+                    }
 
-                        @Override
-                        public void onFailure(Call<Boolean> call, Throwable t) {
+                    else {
+                        if(Global.isAlready)
+                        {
+                            btnLove.setChecked(false);
+                            Global.showPreloader(context,"Removing From Favorite List...");
+                            RestService restService = new RestService();
+                            Call<Boolean> call = restService.getService().RemoveBookmark(Global.currentAcc.userid,data);
+                            call.enqueue(new Callback<Boolean>() {
+                                @Override
+                                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                                    Global.isUpdate = true;
+                                    Global.isAlready = false;
+                                    Global.currentAcc.Favorite.remove(data);
+                                    Global.hidePreloader();
+                                }
 
+                                @Override
+                                public void onFailure(Call<Boolean> call, Throwable t) {
+                                    Global.hidePreloader();
+                                }
+                            });
                         }
-                    });
+                        else
+                        {
+                            Global.showPreloader(context,"Adding To Favorite List....");
+                            btnLove.setChecked(true);
+                            RestService restService = new RestService();
+                            Call<Boolean> call = restService.getService().Bookmark(Global.currentAcc.userid,data);
+                            call.enqueue(new Callback<Boolean>() {
+                                @Override
+                                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                                    Global.isUpdate = true;
+                                    Global.isAlready = true;
+                                    Global.currentAcc.Favorite.add(data);
+                                    Global.hidePreloader();
+                                }
+
+                                @Override
+                                public void onFailure(Call<Boolean> call, Throwable t) {
+                                    Global.hidePreloader();
+                                }
+                            });
+                        }
+                    }
                 }
             });
         }

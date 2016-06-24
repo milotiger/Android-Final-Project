@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.example.hmtri1312624.foodyapp.Model.Account;
-import com.example.hmtri1312624.foodyapp.Model.FoodyItemInfo;
 import com.example.hmtri1312624.foodyapp.Model.FoodyMenuItem;
 import com.example.hmtri1312624.foodyapp.Model.FoodyMenuSet;
 
@@ -19,10 +18,13 @@ import java.util.List;
 public class Global {
     public static String CurrentQuery;
     public static List<String> currentImageList = null;
-    public static List<FoodyMenuItem> currentMenuList;
+    public static List<FoodyMenuItem> currentMenuList = null;
     public static List<FoodyMenuSet> currentMenuSet = null;
     public static Account currentAcc = null;
+    public static Boolean HaveList = false;
     public static String MyPref = "MyPrefs";
+    public static Boolean isAlready = false; // check if Exists in Favorite List
+    public static Boolean isUpdate = false; // check if update Favorite List
     static ProgressDialog dialog;
 
     public static void showPreloader(Context context,String Message)

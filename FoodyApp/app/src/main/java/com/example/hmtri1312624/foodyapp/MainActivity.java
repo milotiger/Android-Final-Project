@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     RVAdapter adapter;
     List<FoodyItemInfo> data;
     RecyclerView rv;
-    Button btnNext,btnSearchNext,btnShow;
+    Button btnNext,btnSearchNext,btnShow, btnBack;
     EditText editSearch;
     TextView facebookname;
     RelativeLayout layoutSearch;
@@ -129,23 +129,30 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnShow=(Button)findViewById(R.id.btnShowBookMark);
+        btnShow.setTypeface(FontManager.getTypeface(context,FontManager.FONTAWESOME));
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RestService rest = new RestService();
-                Call<List<FoodyItemInfo>> menu = rest.getService().ShowBookmark(Global.currentAcc.userid);
-                menu.enqueue(new Callback<List<FoodyItemInfo>>() {
-                    @Override
-                    public void onResponse(Call<List<FoodyItemInfo>> call, Response<List<FoodyItemInfo>> response) {
-                        List<FoodyItemInfo> temp = response.body();
-                    }
+                Global.currentMenuSet = null;
+                Global.currentImageList = null;
+                LoadFavoriteList();
+                if(Global.HaveList == false && Global.currentAcc.Favorite == null) {
+                    MyAlertDialog.ShowDialog("You dont have any favorite food place", activity);
+                }
+                else {
+                    Intent i = new Intent(MainActivity.this, FavoriteActivity.class);
+                    startActivity(i);
+                }
+            }
+        });
 
-                    @Override
-                    public void onFailure(Call<List<FoodyItemInfo>> call, Throwable t) {
-
-                    }
-                });
-
+        btnBack = (Button)findViewById(R.id.back_button);
+        btnBack.setTypeface(FontManager.getTypeface(context,FontManager.FONTAWESOME));
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, FavoriteActivity.class);
+                startActivity(i);
             }
         });
 
@@ -165,6 +172,9 @@ public class MainActivity extends AppCompatActivity {
                     facebookname.setText("");
                     btnShow.setVisibility(View.GONE);
                     Global.currentAcc = new Account();
+                    Global.HaveList = false;
+                    Intent i = new Intent(MainActivity.this,MainActivity.class);
+                    startActivity(i);
                 }
             }
         };
@@ -173,18 +183,25 @@ public class MainActivity extends AppCompatActivity {
         AccessToken At = AccessToken.getCurrentAccessToken();
         if(At == null)
         {
-            facebookname.setText("");
-            btnShow.setVisibility(View.GONE);
             Global.currentAcc = new Account();
+            facebookname.setText("");
+            btnShow.setVisibility(View.INVISIBLE);
         }
         //already login
         else{
+            btnShow.setVisibility(View.VISIBLE);
             facebookname.setText(sharedpreferences.getString("UserName","Default"));
             Global.currentAcc.userid = sharedpreferences.getString("UserID","xxx");
+            //Load Favorite List Of This Account
+            LoadFavoriteList();
         }
         //end for facebook login
         btnNext.setVisibility(View.GONE);
+        btnShow.setVisibility(View.GONE);
+        facebookname.setVisibility(View.GONE);
         layoutSearch.setVisibility(View.GONE);
+        loginButton.setVisibility(View.GONE);
+        btnBack.setVisibility(View.GONE);
         getData(Global.CurrentQuery);
     }
 
@@ -203,10 +220,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSuccess(LoginResult loginResult) {
             Global.currentAcc.userid = loginResult.getAccessToken().getUserId();
-
             final SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.putString("UserID",Global.currentAcc.userid);
 
+            //LoadFavoriteList Of This Account
+            LoadFavoriteList();
             GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                 @Override
                 public void onCompleted(JSONObject object, GraphResponse response) {
@@ -237,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
     };
+
     private void getData(String FoodName){
 
         RestService restService = new RestService();
@@ -251,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                 data = response.body();
                 Global.currentMenuSet = null;
                 Global.currentImageList = null;
+                Global.isUpdate = false; //check if update favorite list
                 if (data == null)
                 {
                     MyAlertDialog.ShowDialog("We did not found any places which has your food",activity);
@@ -268,6 +288,12 @@ public class MainActivity extends AppCompatActivity {
                 rv.setAdapter(adapter);
                 btnNext.setVisibility(View.VISIBLE);
                 layoutSearch.setVisibility(View.VISIBLE);
+                if(Global.currentAcc.userid != null) {
+                    btnShow.setVisibility(View.VISIBLE);
+                }
+                facebookname.setVisibility(View.VISIBLE);
+                loginButton.setVisibility(View.VISIBLE);
+                btnBack.setVisibility(View.VISIBLE);
             }
             @Override
             public void onFailure(Call<List<FoodyItemInfo>> call, Throwable t) {
@@ -285,4 +311,32 @@ public class MainActivity extends AppCompatActivity {
         Global.hideSoftInput(activity);
     }
 
+    private void LoadFavoriteList(){
+        RestService restService = new RestService();
+
+        Call<List<FoodyItemInfo>> call = restService.getService().ShowBookmark(Global.currentAcc.userid);
+
+        call.enqueue(new Callback<List<FoodyItemInfo>>() {
+            @Override
+            public void onResponse(Call<List<FoodyItemInfo>> call, Response<List<FoodyItemInfo>> response) {
+                data = response.body();
+                Global.currentAcc.Favorite = data;
+                if (data == null)
+                {
+                    Global.HaveList = false;
+                    return;
+                }
+
+                Global.HaveList = true;
+                if(Global.isUpdate)
+                {
+                    Intent i = new Intent(MainActivity.this,FavoriteActivity.class);
+                    startActivity(i);
+                }
+            }
+            @Override
+            public void onFailure(Call<List<FoodyItemInfo>> call, Throwable t) {
+            }
+        });
+    }
 }

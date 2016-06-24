@@ -108,8 +108,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent i = getIntent();
         Bundle bundle = i.getBundleExtra("MyPackage");
         //End location
-        String add = bundle.getString("Address");
+        String add1 = bundle.getString("AddLv1");
+        String add2 = bundle.getString("AddLv2");
+        String add3 = ", Hồ Chí Minh";
         EndLocation = bundle.getString("EndLocation");
+
+        if (add1 != null && add1.contains("P.")) {
+            String[] add1_fix = add1.split(",");
+            if (add1_fix.length > 2)
+                add1 = add1_fix[1];
+            if (add1_fix.length == 2)
+                add1 = add1_fix[0];
+        }
+
+        String add = add1 + ", " + add2 + add3;
 
         Global.showPreloader(this,"Loading location....");
         getDirect(add);
@@ -350,9 +362,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onLocationChanged(Location location) {
                 LatLng updateLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(updateLocation));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLng(updateLocation));
                 // Zoom in the Google Map
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+                //mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
             }
 
             @Override

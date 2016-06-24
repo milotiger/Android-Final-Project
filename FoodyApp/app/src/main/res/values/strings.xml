@@ -8,6 +8,7 @@
     <string name="icon_camera">&#xf030;</string>
     <string name="icon_star">&#xf005;</string>
     <string name="icon_search">&#xf002;</string>
+    <string name="icon_back">&#xf100;</string>
     <string name="facebook_app_id">1211429772224945</string>
     <string name="fb_login_protocol_scheme">fb1211429772224945</string>
 </resources>

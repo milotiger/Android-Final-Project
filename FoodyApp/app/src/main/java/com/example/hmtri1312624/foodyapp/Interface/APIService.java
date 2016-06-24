@@ -29,6 +29,9 @@ public interface APIService {
     @POST("api/addbookmark/{userid}")
     Call<Boolean> Bookmark(@Path("userid") String id, @Body FoodyItemInfo foodyItemInfo);
 
+    @POST("api/removebookmark/{userid}")
+    Call<Boolean> RemoveBookmark(@Path("userid") String id, @Body FoodyItemInfo foodyItemInfo);
+
     @GET("api/showbookmark/{userid}")
     Call<List<FoodyItemInfo>> ShowBookmark(@Path("userid") String id);
 

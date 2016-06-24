@@ -68,7 +68,7 @@ public class RVMAdapter extends RecyclerView.Adapter<RVMAdapter.ViewHolder>{
 
         public void setItem(FoodyMenuItem item) {
             foodName.setText(item.Name);
-            foodPrice.setText(item.Price);
+            foodPrice.setText(item.Price + "VNĐ");
             LoadAva(item.ImageUrl);
         }
 
