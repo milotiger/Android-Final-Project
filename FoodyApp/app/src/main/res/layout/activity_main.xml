@@ -5,123 +5,120 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_blur">
 
-    <RelativeLayout
-        android:id="@+id/layout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="5dp"/>
-
-        <TextView
-            android:id="@+id/txtfacebookname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thanh Trí Nguyễn"
-            android:textStyle="bold"
-            android:layout_toRightOf="@+id/login_button"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="4dp"
-            android:textColor="#FFFF8D"
-            android:background="#004D40"
-            android:padding="3.5dp"
-            />
-
-        <Button
-            android:id="@+id/btnShowBookMark"
-            android:layout_width="45dp"
-            android:layout_height="wrap_content"
-            android:text="@string/icon_heart"
-            android:textSize="20sp"
-            android:background="#00000000"
-            android:textColor="#FFFF8D"
-            android:layout_toRightOf="@+id/txtfacebookname"
-            android:layout_centerInParent="true"/>
-
-        <Button
-            android:id="@+id/back_button"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:text="@string/icon_back"
-            android:textSize="30sp"
-            android:textColor="#fff"
-            android:background="#00000000"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"/>
-
-    </RelativeLayout>
-    <ScrollView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/layout1"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="5dp">
-
-
-
-    <RelativeLayout
+        <RelativeLayout
+            android:id="@+id/layout1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:id="@+id/layout_search"
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/layout_corner"
-                android:padding="2dp"
-                android:layout_centerHorizontal="true">
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="5dp"/>
 
-                <EditText
-                    android:id="@+id/editSearchNext"
-                    android:layout_width="220dp"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:imeOptions="actionSearch"
-                    android:hint="Ăn sáng quận 5"
-                    android:nextFocusUp="@id/editSearchNext"
-                    android:nextFocusLeft="@id/editSearchNext"
-                    android:textColor="@color/color_text"/>
-
-                <Button
-                    android:id="@+id/btnSearchNext"
-                    android:layout_width="35dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/icon_search"
-                    android:textColor="@color/color_text"
-                    android:layout_toRightOf="@+id/editSearchNext"
-                    android:background="#00000000"/>
-
-            </RelativeLayout>
-
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/txtfacebookname"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/rv"
-                android:layout_marginTop="15dp"
-                android:layout_below="@+id/layout_search"
-                android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:text="Thanh Trí Nguyễn"
+                android:textStyle="bold"
+                android:layout_toRightOf="@+id/login_button"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="4dp"
+                android:textColor="#FFFF8D"
+                android:background="#004D40"
+                android:padding="3.5dp"
+                />
 
             <Button
-                android:id="@+id/btnNext"
-                android:layout_width="wrap_content"
+                android:id="@+id/btnShowBookMark"
+                android:layout_width="45dp"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Find Next"
+                android:text="@string/icon_heart"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_below="@+id/rv"
-                android:layout_marginTop="5dp"
-                android:textColor="#FFFF8D"
                 android:background="#00000000"
-                />
+                android:textColor="#FFFF8D"
+                android:layout_toRightOf="@+id/txtfacebookname"
+                android:layout_centerInParent="true"/>
+
+            <Button
+                android:id="@+id/back_button"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:text="@string/icon_back"
+                android:textSize="30sp"
+                android:textColor="#fff"
+                android:background="#00000000"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"/>
+
         </RelativeLayout>
-    </ScrollView>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:id="@+id/swipe">
+        <ScrollView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/layout1"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="5dp">
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/layout_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/layout_corner"
+                    android:padding="2dp"
+                    android:layout_centerHorizontal="true">
+
+                    <EditText
+                        android:id="@+id/editSearchNext"
+                        android:layout_width="220dp"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:imeOptions="actionSearch"
+                        android:hint="Ăn sáng quận 5"
+                        android:textAlignment="center"
+                        android:nextFocusUp="@id/editSearchNext"
+                        android:nextFocusLeft="@id/editSearchNext"
+                        android:textColor="@color/color_text"/>
+
+                    <Button
+                        android:id="@+id/btnSearchNext"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/icon_search"
+                        android:textColor="@color/color_text"
+                        android:layout_toRightOf="@+id/editSearchNext"
+                        android:background="#00000000"/>
+
+                </RelativeLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rv"
+                    android:layout_marginTop="15dp"
+                    android:layout_below="@+id/layout_search"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"/>
+
+
+            </RelativeLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 </RelativeLayout>

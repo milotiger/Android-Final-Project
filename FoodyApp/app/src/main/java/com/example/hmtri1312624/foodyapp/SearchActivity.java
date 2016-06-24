@@ -31,7 +31,7 @@ public class SearchActivity extends Activity {
         btnSearch = (Button)findViewById(R.id.btnSearchFood);
 
         editFood = (EditText)findViewById(R.id.editFood);
-        editFood.setTypeface(FontManager.getTypeface(SearchActivity.this,FontManager.ROBOTO));
+        editFood.setTypeface(FontManager.getTypeface(SearchActivity.this,FontManager.ROBOTOLIGHT));
 
         editFood.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -45,7 +45,7 @@ public class SearchActivity extends Activity {
             }
         });
 
-        btnSearch.setTypeface(FontManager.getTypeface(SearchActivity.this,FontManager.ROBOTO));
+        btnSearch.setTypeface(FontManager.getTypeface(SearchActivity.this,FontManager.ROBOTOLIGHT));
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +57,7 @@ public class SearchActivity extends Activity {
 
     private void checkAndSearch()
     {
+        Global.showPreloader(this, "Loading...");
         Global.hideSoftInput(activity);
         Intent i = new Intent(SearchActivity.this, MainActivity.class);
         String foodname = editFood.getText().toString();
