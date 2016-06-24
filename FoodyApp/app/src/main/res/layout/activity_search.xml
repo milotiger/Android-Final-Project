@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_blur">
+
+    <RelativeLayout
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:padding="10dp">
+        <EditText
+            android:id="@+id/editFood"
+            android:textColor="#fff"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_margin="10dp"
+            android:textColorHint="#FFCDD2"
+            android:hint="What To Eat Today?"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            android:layout_centerHorizontal="true"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:background="@drawable/layout_button"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            android:id="@+id/btnSearchFood"
+            android:layout_below="@+id/editFood"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+</RelativeLayout>
