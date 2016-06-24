@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_main);
 
+        Global.needReload = false;
         Global.currentAcc = new Account();
 
         loginButton = (LoginButton)findViewById(R.id.login_button);
@@ -135,14 +136,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Global.currentMenuSet = null;
                 Global.currentImageList = null;
-                LoadFavoriteList();
-                if(Global.HaveList == false && Global.currentAcc.Favorite == null) {
-                    MyAlertDialog.ShowDialog("You dont have any favorite food place", activity);
-                }
-                else {
-                    Intent i = new Intent(MainActivity.this, FavoriteActivity.class);
-                    startActivity(i);
-                }
+                Global.LoadNewFavoriteList(context);
             }
         });
 
@@ -151,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, FavoriteActivity.class);
+                Intent i = new Intent(MainActivity.this, SearchActivity.class);
                 startActivity(i);
             }
         });
@@ -193,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             facebookname.setText(sharedpreferences.getString("UserName","Default"));
             Global.currentAcc.userid = sharedpreferences.getString("UserID","xxx");
             //Load Favorite List Of This Account
-            LoadFavoriteList();
+            Global.LoadAlreadyFavoriteList();
         }
         //end for facebook login
         btnNext.setVisibility(View.GONE);
@@ -224,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("UserID",Global.currentAcc.userid);
 
             //LoadFavoriteList Of This Account
-            LoadFavoriteList();
+            Global.LoadAlreadyFavoriteList();
             GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                 @Override
                 public void onCompleted(JSONObject object, GraphResponse response) {
@@ -309,34 +303,5 @@ public class MainActivity extends AppCompatActivity {
         layoutSearch.setVisibility(View.GONE);
         getData(Global.CurrentQuery);
         Global.hideSoftInput(activity);
-    }
-
-    private void LoadFavoriteList(){
-        RestService restService = new RestService();
-
-        Call<List<FoodyItemInfo>> call = restService.getService().ShowBookmark(Global.currentAcc.userid);
-
-        call.enqueue(new Callback<List<FoodyItemInfo>>() {
-            @Override
-            public void onResponse(Call<List<FoodyItemInfo>> call, Response<List<FoodyItemInfo>> response) {
-                data = response.body();
-                Global.currentAcc.Favorite = data;
-                if (data == null)
-                {
-                    Global.HaveList = false;
-                    return;
-                }
-
-                Global.HaveList = true;
-                if(Global.isUpdate)
-                {
-                    Intent i = new Intent(MainActivity.this,FavoriteActivity.class);
-                    startActivity(i);
-                }
-            }
-            @Override
-            public void onFailure(Call<List<FoodyItemInfo>> call, Throwable t) {
-            }
-        });
     }
 }

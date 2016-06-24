@@ -27,6 +27,7 @@ public class SearchActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        Global.needReload = false;
         activity = this;
 
         btnSearch = (Button)findViewById(R.id.btnSearchFood);
