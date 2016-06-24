@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -16,6 +17,7 @@ import com.example.hmtri1312624.foodyapp.Model.FoodyMenuSet;
 import com.example.hmtri1312624.foodyapp.MyAlertDialog;
 import com.example.hmtri1312624.foodyapp.Service.RestService;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -114,5 +116,33 @@ public class Global {
             public void onFailure(Call<List<FoodyItemInfo>> call, Throwable t) {
             }
         });
+    }
+
+    public static void showSnack(View v, String Message)
+    {
+        Snackbar.make(v, Message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    public static boolean isOnline() {
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 203.162.4.191");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+
+        return false;
+    }
+
+    public static boolean CheckOnline(View v)
+    {
+        boolean isOnline = isOnline();
+        if (!isOnline)
+            showSnack(v, "You are not online! Please check your connection!");
+        return isOnline;
     }
 }

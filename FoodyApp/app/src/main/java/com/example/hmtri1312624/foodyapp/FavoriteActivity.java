@@ -8,8 +8,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -56,8 +56,7 @@ public class FavoriteActivity extends Activity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(FavoriteActivity.this,MainActivity.class);
-                startActivity(i);
+                goHome();
             }
         });
         context = this;
@@ -92,7 +91,7 @@ public class FavoriteActivity extends Activity {
         };
 
 
-        facebookname.setText(sharedpreferences.getString("UserName","Default"));
+        facebookname.setText(sharedpreferences.getString("UserName","Default") + "'s Bookmarks");
         Global.currentAcc.userid = sharedpreferences.getString("UserID","xxx");
 
         //end for facebook
@@ -119,5 +118,19 @@ public class FavoriteActivity extends Activity {
             }
         });
         rv.setAdapter(adapter2);
+    }
+
+    private void goHome()
+    {
+        Intent i = new Intent(FavoriteActivity.this,MainActivity.class);
+        startActivity(i);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            goHome();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

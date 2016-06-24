@@ -1,10 +1,8 @@
 package com.example.hmtri1312624.foodyapp;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -62,6 +60,10 @@ public class SearchActivity extends Activity {
         Global.hideSoftInput(activity);
         Intent i = new Intent(SearchActivity.this, MainActivity.class);
         String foodname = editFood.getText().toString();
+
+        if (Global.CheckOnline(btnSearch) == false)
+            return;
+
         if(foodname.compareTo("") == 0)
             MyAlertDialog.ShowDialog("Missing Type Your Food!!",activity);
         else {

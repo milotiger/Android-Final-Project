@@ -21,11 +21,16 @@
             android:id="@+id/txtfacebookname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="xxx"
+            android:text="Thanh Trí Nguyễn"
+            android:textStyle="bold"
             android:layout_toRightOf="@+id/login_button"
             android:textSize="16sp"
-            android:layout_marginTop="11dp"
-            android:layout_marginLeft="4dp"/>
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="4dp"
+            android:textColor="#FFFF8D"
+            android:background="#004D40"
+            android:padding="3.5dp"
+            />
 
         <Button
             android:id="@+id/btnShowBookMark"
@@ -34,6 +39,7 @@
             android:text="@string/icon_heart"
             android:textSize="20sp"
             android:background="#00000000"
+            android:textColor="#FFFF8D"
             android:layout_toRightOf="@+id/txtfacebookname"
             android:layout_centerInParent="true"/>
 
@@ -108,11 +114,13 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="Find Next"
-                android:textColor="@color/color_text"
                 android:textSize="20sp"
-                android:background="@drawable/layout_button"
+                android:textStyle="bold"
                 android:layout_below="@+id/rv"
-                android:layout_marginTop="5dp"/>
+                android:layout_marginTop="5dp"
+                android:textColor="#FFFF8D"
+                android:background="#00000000"
+                />
         </RelativeLayout>
     </ScrollView>
 

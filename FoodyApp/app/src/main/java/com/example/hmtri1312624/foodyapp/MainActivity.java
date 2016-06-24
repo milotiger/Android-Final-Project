@@ -3,23 +3,19 @@ package com.example.hmtri1312624.foodyapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.content.SharedPreferences;
-import android.widget.Toast;
 
 import com.example.hmtri1312624.foodyapp.Global.Global;
 import com.example.hmtri1312624.foodyapp.Model.Account;
@@ -119,8 +115,6 @@ public class MainActivity extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnNext.setVisibility(View.GONE);
-                layoutSearch.setVisibility(View.GONE);
                 String Next = editSearch.getText().toString();
                 if (!Next.equals(""))
                     Global.CurrentQuery = Next;
@@ -134,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!Global.CheckOnline(v))
+                    return;
                 Global.currentMenuSet = null;
                 Global.currentImageList = null;
                 Global.LoadNewFavoriteList(context);
@@ -212,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FacebookCallback<LoginResult> resCallback = new FacebookCallback<LoginResult>() {
         @Override
-        public void onSuccess(LoginResult loginResult) {
+        public void onSuccess(final LoginResult loginResult) {
             Global.currentAcc.userid = loginResult.getAccessToken().getUserId();
             final SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.putString("UserID",Global.currentAcc.userid);
@@ -246,16 +242,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onError(FacebookException error) {
-            return;
+
         }
     };
 
     private void getData(String FoodName){
 
+        if (!Global.CheckOnline(btnNext))
+            return;
+
         RestService restService = new RestService();
         Call<List<FoodyItemInfo>> call = restService.getService().GetPlaces(FoodName);
 
         Global.showPreloader(context, "Loading data...");
+        layoutSearch.setVisibility(View.VISIBLE);
         call.enqueue(new Callback<List<FoodyItemInfo>>() {
             @Override
             public void onResponse(Call<List<FoodyItemInfo>> call, Response<List<FoodyItemInfo>> response) {
@@ -280,7 +280,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 rv.setAdapter(adapter);
-                btnNext.setVisibility(View.VISIBLE);
                 layoutSearch.setVisibility(View.VISIBLE);
                 if(Global.currentAcc.userid != null) {
                     btnShow.setVisibility(View.VISIBLE);
@@ -288,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
                 facebookname.setVisibility(View.VISIBLE);
                 loginButton.setVisibility(View.VISIBLE);
                 btnBack.setVisibility(View.VISIBLE);
+                btnNext.setVisibility(View.VISIBLE);
             }
             @Override
             public void onFailure(Call<List<FoodyItemInfo>> call, Throwable t) {
@@ -299,9 +299,19 @@ public class MainActivity extends AppCompatActivity {
     private void SearchOther()
     {
         Global.CurrentQuery = editSearch.getText().toString();
-        btnNext.setVisibility(View.GONE);
-        layoutSearch.setVisibility(View.GONE);
         getData(Global.CurrentQuery);
         Global.hideSoftInput(activity);
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            goHome();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void goHome() {
+        Intent i = new Intent(MainActivity.this,SearchActivity.class);
+        startActivity(i);
     }
 }

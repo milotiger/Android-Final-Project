@@ -47,11 +47,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview, parent, false);
+        final View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview, parent, false);
         final ViewHolder mViewHolder = new ViewHolder(mView);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 listener.onItemClick(v, mViewHolder.getPosition());
             }
         });
@@ -202,6 +203,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnCmt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!Global.CheckOnline(v))
+                        return;
                     ShowComment(data.CommentDetails);
                 }
             });
@@ -209,6 +212,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnCamera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!Global.CheckOnline(v))
+                        return;
                     if(Global.currentImageList != null){
                         Intent i = new Intent(context, GalleryActivity.class);
                         context.startActivity(i);
@@ -241,6 +246,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!Global.CheckOnline(v))
+                        return;
                     Intent i = new Intent(context, MapsActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("AddLv1", data.AddressLv1);
@@ -254,16 +261,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!Global.CheckOnline(v))
+                        return;
                     if(Global.currentMenuSet != null)
                     {
                         MyAlertDialog.ShowMenuDialog(context,Global.currentMenuSet);
                     }
-
-                    if(data.MenuSets != null){
-                        Global.currentMenuSet = data.MenuSets;
-                        MyAlertDialog.ShowMenuDialog(context,Global.currentMenuSet);
-                    }
-
+//
+//                    if(data.MenuSets != null){
+//                        Global.currentMenuSet = data.MenuSets;
+//                        MyAlertDialog.ShowMenuDialog(context,Global.currentMenuSet);
+//                    }
+//
                     else {
                         Global.showPreloader(context,"Loading menu...");
                         RestService restService = new RestService();
@@ -295,6 +304,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
             btnLove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!Global.CheckOnline(v))
+                        return;
                     if(Global.currentAcc.userid == null){
                         btnLove.setChecked(false);
                         MyAlertDialog.ShowDialog("Please Login To Adding...",context);
