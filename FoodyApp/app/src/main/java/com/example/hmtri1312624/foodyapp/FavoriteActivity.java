@@ -40,9 +40,12 @@ public class FavoriteActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_favorite);
+
+        Global.needReload = true;
 
         loginButton = (LoginButton)findViewById(R.id.login_button2);
 

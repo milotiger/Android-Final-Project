@@ -86,7 +86,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
 
     @Override
     public int getItemCount() {
-        return data.size();
+        if(data != null) {
+            return data.size();
+        }
+        return 0;
     }
 
     public RVAdapter(Context mContext, List<FoodyItemInfo> data, CustomItemClickListener listener) {
@@ -309,7 +312,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                                     Global.isUpdate = true;
                                     Global.isAlready = false;
-                                    Global.currentAcc.Favorite.remove(data);
+                                    if(Global.needReload)
+                                    {
+                                        Global.LoadNewFavoriteList(context);
+                                    }
                                     Global.hidePreloader();
                                 }
 
@@ -330,7 +336,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder>{
                                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                                     Global.isUpdate = true;
                                     Global.isAlready = true;
-                                    Global.currentAcc.Favorite.add(data);
+                                    if(Global.needReload)
+                                    {
+                                        Global.LoadNewFavoriteList(context);
+                                    }
                                     Global.hidePreloader();
                                 }
 
